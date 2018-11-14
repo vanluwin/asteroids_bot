@@ -1,4 +1,4 @@
-class MLP {
+class Mlp {
     // Fully-connected Multi-Layer Perceptron (MLP)
     constructor(inputSize, hiddenSize, outputSize, learning_rate = 0.01, bias = 1, epochs = 100, debug = false) {
         this.inputSize  = inputSize;

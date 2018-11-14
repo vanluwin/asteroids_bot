@@ -21,8 +21,6 @@ class Nave {
 
     // Desenha os sensores que detectam os meteoros
     drawShipSensors() {
-        stroke(255, 0, 0);
-
         if (this.sensors == 4) {
             this.sensorPoints = [
                 createVector(this.sensorLen, 0),
@@ -47,7 +45,7 @@ class Nave {
     sensorDistance(meteoro) {
        
         for(let point of this.sensorPoints) {
-            stroke(0, 0, 255);
+            stroke(255, 0, 0);
             line(
                 this.posicao.x,
                 this.posicao.y,
