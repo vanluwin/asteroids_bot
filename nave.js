@@ -41,87 +41,44 @@ class Nave {
                 createVector(0, -this.sensorLen),
                 createVector(this.sensorLen, -this.sensorLen)
             ];
-        }
-        /*
-        for (let point of this.sensorPoints) {
-            line(0, 0, point.x, point.y);
-        }
-        */
-    }
-
-    checkIntersections(r, h, k, m, n) {
-        // circle: (x - h)^2 + (y - k)^2 = r^2
-        // line: y = m * x + n
-        // r: circle radius
-        // h: x value of circle centre
-        // k: y value of circle centre
-        // m: slope
-        // n: y-intercept
-
-        // get a, b, c values
-        let a = 1 + sq(m);
-        let b = -h * 2 + m * (n - k) * 2;
-        let c = sq(h) + sq(n - k) - sq(r);
-
-        // get discriminant
-        let d = sq(b) - 4 * a * c;
-
-        if (d >= 0) {
-            return true;
-        }
-        // no intersection
-        return false;
+        }        
     }
 
     sensorDistance(meteoro) {
-        /*
-        let d = dist(
-            point.x,
-            point.y,
-            meteoro.posicao.x,
-            meteoro.posicao.y
-        );
-        */
-
-        if (
-            collideLineCircle(
+       
+        for(let point of this.sensorPoints) {
+            stroke(0, 0, 255);
+            line(
                 this.posicao.x,
                 this.posicao.y,
-                this.sensorPoints[0].x + this.posicao.x,
-                this.sensorPoints[0].y + this.posicao.y,
-                meteoro.posicao.x,
-                meteoro.posicao.y,
-                meteoro.r
-            )
-        ) {
-            console.log("Intercept");
+                cos(this.angulo) * point.x - sin(this.angulo) * point.y + this.posicao.x,
+                sin(this.angulo) * point.x + cos(this.angulo) * point.y + this.posicao.y
+            );
+
+            if (
+                collideLineCircle(
+                    this.posicao.x,
+                    this.posicao.y,
+                    cos(this.angulo) * point.x - sin(this.angulo) * point.y + this.posicao.x,
+                    sin(this.angulo) * point.x + cos(this.angulo) * point.y + this.posicao.y,
+                    meteoro.posicao.x,
+                    meteoro.posicao.y,
+                    meteoro.r
+                )
+            ) {
+                console.log("Intercept");
+                let d = dist(
+                    this.posicao.x,
+                    this.posicao.y,
+                    meteoro.posicao.x,
+                    meteoro.posicao.y
+                );
+
+                console.log('d: ' + d);
+            }
+            
+            
         }
-
-        stroke(0, 0, 255);
-        line(
-            this.posicao.x,
-            this.posicao.y,
-            this.sensorPoints[0].x + this.posicao.x,
-            this.sensorPoints[0].y + this.posicao.y
-        );
-
-        push();
-        translate(this.posicao.x, this.posicao.y);
-        rotate(this.angulo);
-        stroke(255, 0, 0);
-        line(0, 0, this.sensorPoints[0].x, this.sensorPoints[0].y);
-        pop();
-
-        stroke(0, 255, 0);
-        line(0, 0, meteoro.posicao.x, meteoro.posicao.y);
-
-        stroke(255, 0, 255);
-        line(
-            this.posicao.x,
-            this.posicao.y,
-            meteoro.posicao.x,
-            meteoro.posicao.y
-        );
     }
 
     //define o metodo para mostrar a nave

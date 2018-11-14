@@ -22,6 +22,47 @@ function setup() {
 
     //cria um interlo de tempo no qual serão adicionados novos meteros
     setInterval(criarMeteoro, tempo);
+
+    //inserirComando(AG.frente, AG.esquerda, AG.direita, AG.tiro);
+    setInterval(comando, 120);
+    setInterval(removerComando, 1000);
+}
+
+function comando() {
+    inserirComando(
+        Math.random() % 2 >= 0.5,
+        Math.random() % 2 >= 0.3,
+        Math.random() % 2 >= 0.3,
+        Math.random() % 2 >= 0.1
+    );
+    if (estado == 0) {
+        estado = 1;
+    } else if (estado == 2) {
+        estado = 3;
+    } else if (estado == 3) {
+        recarregar();
+    }
+}
+
+function inserirComando(frente, esquerda, direita, tiro) {
+    if (frente) {
+        //se foi seta para cima addiona aceleração a nave
+        nave.boosting(true);
+    } else if (direita) {
+        //se foi seta para direita adiona um multiplicador positivo ao angulo para que a nave rode para a direita
+        nave.k = 0.03;
+    } else if (esquerda) {
+        //se foi seta para esquerda adiona um multiplicador negativo ao angulo para que a nave rode para a esquerda
+        nave.k = -0.03;
+    } else if (tiro) {
+        let tiro = new Tiro(nave.posicao, nave.angulo);
+        tiros.push(tiro);
+    }
+}
+
+function removerComando() {
+    nave.k = 0;
+    nave.boosting(false);
 }
 
 //funcção para criar novos meteoros
@@ -66,19 +107,19 @@ function draw() {
 
         // Desenha a nave
         nave.mostrar();
-        // Move a nave 
-        nave.update(); 
+        // Move a nave
+        nave.update();
         // Verfica se a nave esta nas bordas da tela
-        nave.edges(); 
+        nave.edges();
 
         //desenha todos os meteoros
         for (let i = 0; i < meteoros.length; i++) {
             meteoros[i].update(); //move o meteoro
             meteoros[i].mostrar(); //mostra o meteoro
             //meteoros[i].edges();//verifica se o meteoro se encontra nas bordas do canvas
-            
+
             // verificar se um meteoro atingiu a nave
-            nave.atingida(meteoros[i]); 
+            nave.atingida(meteoros[i]);
 
             // Verifica a distancia do meteroro para os sensores
             nave.sensorDistance(meteoros[i]);
