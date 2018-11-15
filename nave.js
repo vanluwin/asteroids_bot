@@ -17,6 +17,8 @@ class Nave {
         this.sensorLen = 200;
         this.sensorPoints = [];
         this.sensorDistances = [];
+
+        this.mlp = new Mlp(this.sensors, 8, 4);
     }
 
     // Desenha os sensores que detectam os meteoros
@@ -39,26 +41,33 @@ class Nave {
                 createVector(0, -this.sensorLen),
                 createVector(this.sensorLen, -this.sensorLen)
             ];
-        }        
+        }
     }
 
     sensorDistance(meteoro) {
-       
-        for(let point of this.sensorPoints) {
+        for (let point of this.sensorPoints) {
             stroke(255, 0, 0);
             line(
                 this.posicao.x,
                 this.posicao.y,
-                cos(this.angulo) * point.x - sin(this.angulo) * point.y + this.posicao.x,
-                sin(this.angulo) * point.x + cos(this.angulo) * point.y + this.posicao.y
+                cos(this.angulo) * point.x -
+                    sin(this.angulo) * point.y +
+                    this.posicao.x,
+                sin(this.angulo) * point.x +
+                    cos(this.angulo) * point.y +
+                    this.posicao.y
             );
 
             if (
                 collideLineCircle(
                     this.posicao.x,
                     this.posicao.y,
-                    cos(this.angulo) * point.x - sin(this.angulo) * point.y + this.posicao.x,
-                    sin(this.angulo) * point.x + cos(this.angulo) * point.y + this.posicao.y,
+                    cos(this.angulo) * point.x -
+                        sin(this.angulo) * point.y +
+                        this.posicao.x,
+                    sin(this.angulo) * point.x +
+                        cos(this.angulo) * point.y +
+                        this.posicao.y,
                     meteoro.posicao.x,
                     meteoro.posicao.y,
                     meteoro.r
@@ -72,10 +81,8 @@ class Nave {
                     meteoro.posicao.y
                 );
 
-                console.log('d: ' + d);
+                console.log("d: " + d);
             }
-            
-            
         }
     }
 

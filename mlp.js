@@ -1,13 +1,11 @@
 class Mlp {
     // Fully-connected Multi-Layer Perceptron (MLP)
-    constructor(inputSize, hiddenSize, outputSize, learning_rate = 0.01, bias = 1, epochs = 100, debug = false) {
+    constructor(inputSize, hiddenSize, outputSize, learning_rate = 0.01, bias = 1) {
         this.inputSize  = inputSize;
         this.hiddenSize = hiddenSize;
         this.outputSize = outputSize;
         this.lr         = learning_rate;
         this.bias       = bias;
-        this.epochs     = epochs;
-        this.debug      = debug;
 
         // Weights
         this.w1 = nj.random([this.inputSize + 1, this.hiddenSize]);
@@ -15,29 +13,21 @@ class Mlp {
 
     }
 
-    // Implementa a Sigmoid como função de ativação
-    sigmoid(x) {
-        return 1/( 1 + Math.exp(x) );
-    }
-
-    // Implementa a derivada da Sigmoid
-    sigmoidPrime(x) {
-        return x * (1 - x);
-    }
-
     // Faz uma predição
     predict(inp) {
-        net1 = this.sigmoid( nj.dot(inp, this.w1) );
-        net2 = this.sigmoid( nj.dot(net1, this.w2) );
+        let net1 = nj.sigmoid( nj.dot(inp, this.w1) );
+        let net2 = nj.sigmoid( nj.dot(net1, this.w2) );
 
         return net2;
     }
 
-    train(inputs, outputs) {
-
-    }
-
     getWeights() {
-        console.log("\n___Weights___");
+        let w1 = new Array(this.w1.flatten().selection.data);
+     
+        let  w2 = new Array(this.w2.flatten().selection.data);
+
+        let weights = w1.concat(w2);
+
+        return weights;
     }
 }

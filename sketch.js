@@ -24,8 +24,8 @@ function setup() {
     setInterval(criarMeteoro, tempo);
 
     //inserirComando(AG.frente, AG.esquerda, AG.direita, AG.tiro);
-    setInterval(comando, 120);
-    setInterval(removerComando, 1000);
+    //setInterval(comando, 120);
+    //setInterval(removerComando, 1000);
 }
 
 function comando() {
