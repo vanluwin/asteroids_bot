@@ -46,18 +46,6 @@ class Nave {
 
     sensorDistance(meteoro) {
         for (let point of this.sensorPoints) {
-            stroke(255, 0, 0);
-            line(
-                this.posicao.x,
-                this.posicao.y,
-                cos(this.angulo) * point.x -
-                    sin(this.angulo) * point.y +
-                    this.posicao.x,
-                sin(this.angulo) * point.x +
-                    cos(this.angulo) * point.y +
-                    this.posicao.y
-            );
-
             if (
                 collideLineCircle(
                     this.posicao.x,
@@ -73,28 +61,43 @@ class Nave {
                     meteoro.r
                 )
             ) {
-                console.log("Intercept");
                 let d = dist(
                     this.posicao.x,
                     this.posicao.y,
                     meteoro.posicao.x,
                     meteoro.posicao.y
                 );
-
-                console.log("d: " + d);
             }
         }
     }
 
+    mostrarSensor(){
+        for (let point of this.sensorPoints) {
+            stroke(255, 0, 0);
+            line(
+                this.posicao.x,
+                this.posicao.y,
+                cos(this.angulo) * point.x -
+                    sin(this.angulo) * point.y +
+                    this.posicao.x,
+                sin(this.angulo) * point.x +
+                    cos(this.angulo) * point.y +
+                    this.posicao.y
+            );
+        }
+    }
+
+
     //define o metodo para mostrar a nave
     mostrar() {
-        this.angulo += this.k; //adiciona ao angulo o multiplicador 'k'
         stroke(255); //define o contorno com a cor branco
         fill(0); //preence a forma com preto
         push(); //começa uma nova rotina de desenho
         translate(this.posicao.x, this.posicao.y); //muda o centro de cordenadas da tela para a atual posição da nave
         rotate(this.angulo); //roda a nave em seu atual angulo
         rectMode(CENTER);
+
+
 
         //forma da nave se estiver acelerando
         if (this.isBoosting) {
@@ -133,6 +136,7 @@ class Nave {
             this.boost();
         }
 
+        this.angulo += this.k; //adiciona ao angulo o multiplicador 'k' 
         //se não é adicionado ao vetor posição o vetor velocidade
         this.posicao.add(this.velocidade);
 
@@ -171,17 +175,17 @@ class Nave {
             meteoro.posicao.x,
             meteoro.posicao.y
         );
-
         if (d < this.r + meteoro.r) {
+            console.log("e morreu " + grift.num);
             //se o raio de colisão da nave for menor que sua soma com o raio do metroro
-            if (vidas == 0) {
+            if (Grift.vidas == 0) {
                 //se não houver mais vidas escreve na tela fim de jogo
-                estado = 2;
+                Grift.estado = 2;
                 this.vivo = false;
             } else {
                 //se ainda houver vidas
-                vidas--; //uma vida é perdida
-                nave = new Nave(); //e a nave volta para o centro da tela
+                Grift.vidas--; //uma vida é perdida
+                Grift.nave = new Nave(); //e a nave volta para o centro da tela
             }
         }
     }
