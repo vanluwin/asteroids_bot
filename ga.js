@@ -33,8 +33,8 @@ class Gene {
     mate(gene) {
         let pivot = Math.round(this.weigths.length / 2) - 1;
 
-        let child1 = this.weigths.substr(0, pivot) + gene.code.substr(pivot);
-        let child2 = gene.code.substr(0, pivot) + this.weigths.substr(pivot);
+        let child1 = this.weigths.substr(0, pivot) + gene.weigths.substr(pivot);
+        let child2 = gene.weigths.substr(0, pivot) + this.weigths.substr(pivot);
 
         return [new Gene(child1), new Gene(child2)];
     }
@@ -78,7 +78,7 @@ class Population {
         for (let i = 0; i < this.members.length; i++) {
             this.members[i].mutate(0.5);
             this.members[i].calcCost(this.goal);
-            if (this.members[i].code == this.goal) {
+            if (this.members[i].weigths == this.goal) {
                 this.sort();
                 return true;
             }
