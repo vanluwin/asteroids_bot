@@ -1,100 +1,123 @@
-class Gene {
-    constructor(weigths) {
+class Cromo {
+    constructor(weigths, pontuacao) {
         if (weigths) {
             this.weigths = weigths;
         } else {
             this.weigths = [];
         }
-        
-        this.cost = 9999;
+
+        this.apitidao = pontuacao;
     }
 
-    random(length) {
-        while (length--) {
-            this.weigths += String.fromCharCode(Math.floor(Math.random() * 255));
-        }
-    }
+    mutate() {
+        let indice1 = Math.floor((Math.random() * this.weigths.length));
+        let indice2 = Math.floor((Math.random() * this.weigths.length));
 
-    mutate(chance) {
-        if (Math.random() > chance) return;
-
-        let index = Math.floor(Math.random() * this.weigths.length);
-        let upOrDown = Math.random() <= 0.5 ? -1 : 1;
-        let newChar = String.fromCharCode(this.weigths.charCodeAt(index) + upOrDown);
-        let newString = '';
-        for (let i = 0; i < this.weigths.length; i++) {
-            if (i == index) newString += newChar;
-            else newString += this.weigths[i];
+        while(indice1 === indice2) { 
+            indice2 = Math.floor((Math.random() * this.weigths.length));
         }
 
-        this.weigths = newString;
+        let aux = this.weigths[indice1]; 
+        this.weigths[indice1] = this.weigths[indice2];
+        this.weigths[indice2] = aux;
     }
 
-    mate(gene) {
-        let pivot = Math.round(this.weigths.length / 2) - 1;
+    cruzamento(cromo) {
+        let pivot = Math.round(this.weigths.length / 2);
 
-        let child1 = this.weigths.substr(0, pivot) + gene.weigths.substr(pivot);
-        let child2 = gene.weigths.substr(0, pivot) + this.weigths.substr(pivot);
+        let child1 = this.weigths.slice(0, pivot).concat(cromo.weigths.slice(pivot, this.weigths.length));
+        let child2 = cromo.weigths.slice(0, pivot).concat(this.weigths.slice(pivot, this.weigths.length));
 
-        return [new Gene(child1), new Gene(child2)];
+        return [new Cromo(child1, 0), new Cromo(child2, 0)];
     }
-
-    calcCost(compareTo) {
-        let total = 0;
-        for (let i = 0; i < this.weigths.length; i++) {
-            total += (this.weigths.charCodeAt(i) - compareTo.charCodeAt(i)) * (this.weigths.charCodeAt(i) - compareTo.charCodeAt(i));
-        }
-        this.cost = total;
-    }
-
 }
 
 class Population {
-    constructor(goal, size) {
-        this.members = [];
-        this.goal = goal;
-        this.generationNumber = 0;
-        while (size--) {
-            let gene = new Gene();
-            gene.random(this.goal.length);
-            this.members.push(gene);
+    constructor(individuos) {
+        if (individuos) {
+            this.individuos = individuos;
+        } else {
+            this.individuos = [];
         }
+
+        this.popSize = this.individuos.length;
+        this.generationNumber = 0;
+        this.tx_cruzamento = 0.1;
+    }
+
+    seleciona_roleta() {
+        let somatotal = 0;
+        this.individuos.forEach(individio => {
+            somatotal += individio.apitidao;
+        });
+
+        // Escolhe um valor aleatorio entre 0 e soma
+        let r = Math.floor((Math.random() * somatotal)); 
+        let soma2 = 0;
+
+        for (let index = 0; index < this.individuos.length; index++) {
+            soma2 += this.individuos[index].apitidao;
+
+            if(soma2 > r) {
+                return this.individuos[index];
+            } 
+        }
+
+        return this.individuos[this.individuos.length - 1];
     }
 
     sort() {
-        this.members.sort( (a, b) => (a.cost - b.cost) );
+        this.individuos.sort( (a, b) => (b.apitidao - a.apitidao) );
+    }
+
+    removeFromPopulation(individuo) {
+        let selIndex = this.individuos.indexOf(individuo);
+        this.individuos.splice(individuo, 1);
     }
 
     generation() {
-        for (let i = 0; i < this.members.length; i++) {
-            this.members[i].calcCost(this.goal);
-        }
-
+        let elite = [];
+        let filhos = [];
+        
         this.sort();
 
-        let children = this.members[0].mate(this.members[1]);
-        this.members.splice(this.members.length - 2, 2, children[0], children[1]);
-
-        for (let i = 0; i < this.members.length; i++) {
-            this.members[i].mutate(0.5);
-            this.members[i].calcCost(this.goal);
-            if (this.members[i].weigths == this.goal) {
-                this.sort();
-                return true;
-            }
+        for (let index = 0; index < Math.ceil(this.individuos.length * this.tx_cruzamento); index++) {//removendo elite
+            elite.push(this.individuos[index]);
+            this.individuos.splice(index, 1);
         }
-        this.generationNumber++;
+
+        //selecionando por roleta e fazendo cruzamento
+        while(this.individuos.length > 0) {          
+            let selecionado1 = this.seleciona_roleta();
+
+            this.removeFromPopulation(selecionado1);
+            
+            let selecionado2 = this.seleciona_roleta(); 
+
+            this.removeFromPopulation(selecionado2);
+            
+            let novos_filhos = selecionado1.cruzamento(selecionado2);
+    
+            novos_filhos.forEach(filho => {
+                filhos.push(filho);
+            });        
+        }
         
-        let scope = this;
-        //console.log(scope)
-        setTimeout(
-            () => scope.generation(), 
-            20
-        );
-        
+        // Mutacao nos filhos
+        filhos.forEach(filho => {
+            filho.mutate();
+        });
+
+        elite.forEach(joao => {
+            filhos.push(joao);
+        });
+
+        this.individuos = filhos;
+
+        this.individuos.sort( () => ( 0.5 - Math.random()) );
+
+        return this.individuos;
+
     }
 
 }
-
-let population = new Population("-123456789", 30);
-population.generation();
