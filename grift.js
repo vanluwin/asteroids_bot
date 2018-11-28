@@ -158,7 +158,7 @@ class Grift{
             this.pontuacao();
         }
     }
-
+    
     //função do framework p5 que verifica se alguma tecla foi 'despressionada'
     released() {
         /*se houver sido uma das diressionais esquerdo ou direito
