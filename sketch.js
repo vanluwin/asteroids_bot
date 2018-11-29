@@ -4,21 +4,29 @@
 let sel_jogo =1;
 let grift = [];
 function setup() {
-    for(let i=0; i< 5;i++)
-        grift.push(new Grift(i));
+    for(let i=0; i<5;i++){
+        grift.push(new Grift());
+        grift[i].num = i;
+        //setInterval(grift[i].criarMeteoro, grift[i].tempo);
+    }
 }
 
 function draw(){
-
-    grift[sel_jogo].draw_game();
-    for(let i=0; i<grift.length;i++)
+    let melhor_indice=0;
+    let mais_pontos;
+    for(let i=1; i<grift.length;i++){
         grift[i].update();
+       // grift[i].comando();
+        if(grift[i].pontos > grift[melhor_indice].pontos && grift[i].vidas>0)
+            melhor_indice = i;
+    }
+
+    grift[melhor_indice].draw_game();
 }
 function keyPressed(){
     if(parseInt(key,10) < grift.length)
         sel_jogo = parseInt(key,10);
     
-    console.log(sel_jogo);
 
     for(let i=0; i<grift.length;i++)
         grift[i].pressed();

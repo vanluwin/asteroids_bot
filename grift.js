@@ -1,35 +1,35 @@
 class Grift{
-    constructor(numero_sim){
-        
-        this.num = this.numero_sim;
+    constructor(){
+        this.num;
         this.nave;
         this.meteoros = [];
         this.tiros = [];
-        this.tempo = 1500;
+        this.tempo = 10000;
+        this.t_ultimo_met = 0;
         this.pontos = 0;
-        this.vidas = 2;
         this.estado = 0;
+        this.vidas = 2;
+        this.max_meteoros = 1;
         //cria o lugar onde o jogo acontecerá
         createCanvas(windowWidth * 0.99, windowHeight * 0.95);
 
         //cria um objeto nave
         this.nave = new Nave();
 
-        this.color = random()*255;
+        this.color = random()*100   ;
         //preenche o vetor meteros com obejetos meteoro
-        for (let i = 0; i < 1; i++) {
+        for (let i = 0; i < 5; i++) {
             this.meteoros.push(new Meteoro());
         }
 
         //cria um interlo de tempo no qual serão adicionados novos meteros
-        setInterval(this.criarMeteoro, this.tempo);
 
         //inserirComando(AG.frente, AG.esquerda, AG.direita, AG.tiro);
         //setInterval(comando, 120);
         //setInterval(removerComando, 1000);
     }
     comando() {
-        inserirComando(
+        this.inserirComando(
             Math.random() % 2 >= 0.5,
             Math.random() % 2 >= 0.3,
             Math.random() % 2 >= 0.3,
@@ -37,7 +37,7 @@ class Grift{
         );
         if (this.estado == 0) {
             this.estado = 1;
-        } else if (estado == 2) {
+        } else if (this.estado == 2) {
             this.estado = 3;
         } else if (this.estado == 3) {
             recarregar();
@@ -46,7 +46,7 @@ class Grift{
     inserirComando(frente, esquerda, direita, tiro) {
         if (frente) {
             //se foi seta para cima addiona aceleração a nave
-            nave.boosting(true);
+            this.nave.boosting(true);
         } else if (direita) {
             //se foi seta para direita adiona um multiplicador positivo ao angulo para que a nave rode para a direita
             this.nave.k = 0.03;
@@ -54,8 +54,8 @@ class Grift{
             //se foi seta para esquerda adiona um multiplicador negativo ao angulo para que a nave rode para a esquerda
             this.nave.k = -0.03;
         } else if (tiro) {
-            let tiro = new Tiro(this.nave.posicao, this.nave.angulo);
-            this.tiros.push(this.tiro);
+            let novo_tiro = new Tiro(this.nave.posicao, this.nave.angulo);
+            this.tiros.push(this.novo_tiro);
         }
     }
     removerComando() {
@@ -65,13 +65,16 @@ class Grift{
 
     //funcção para criar novos meteoros
     criarMeteoro() {
+        let t = new Date().getTime();
         //adiciona no vetor meteoros um novo meteoro
-        if (this.estado == 1) {
-            //meteoros.push(new Meteoro(false, false, nave));
+        if ((t - this.t_ultimo_met) > this.tempo) {
+            this.t_ultimo_met = t;
+            this.meteoros.push(new Meteoro(false, false, this.nave,createVector(10,0)
+                                ));
             //diminui o tempo de criação de novos meteoros ate atingir 0.5s
-            if (this.tempo > 450) {
-                this.tempo -= 450;
-            }
+            // if (this.tempo > 450) {
+            //     this.tempo -= 450;
+            // }
         }
     }
     //função para adicionar pontos ao placar
@@ -87,14 +90,21 @@ class Grift{
         if(this.estado != 3){
             for (let i = 0; i < this.meteoros.length; i++) {
                 this.meteoros[i].update(); //metodo para mover o meteoro
-                this.nave.atingida(this.meteoros[i]);   // verificar se um meteoro atingiu a nave
                 this.nave.sensorDistance(this.meteoros[i]);     // Verifica a distancia do meteroro para os sensores
             }
             this.nave.update();     // Move a nave
             this.nave.edges();      // Verfica se a nave esta nas bordas da tela
+            //this.nave.auto_pilot(this.meteoros,this.tiros);
         }
 
         if (this.estado == 1) {
+            //this.draw_debug();  
+            if(this.meteoros.length < this.max_meteoros)
+                this.criarMeteoro();
+
+            for (let i = 0; i < this.meteoros.length; i++) {
+                this.atingida(this.nave,this.meteoros[i]);   // verificar se um meteoro atingiu a nave
+            }
             for (let i = this.tiros.length - 1; i >= 0; i--) {
                 this.tiros[i].mover(); //metodo para mover os tiros
 
@@ -125,6 +135,29 @@ class Grift{
     }
 
 
+    //define o metodo que verifica se a nave foi atingida
+    atingida(nave,meteoro) {
+        //cria a variavel 'd' que recebe a distancia entre a posicção atual da nave e o meteoro que foi passado como parâmetro
+        var d = dist(
+            nave.posicao.x,
+            nave.posicao.y,
+            meteoro.posicao.x,
+            meteoro.posicao.y
+        );
+        if (d < nave.r + meteoro.r) {
+            console.log("e morreu " + this.num);
+            //se o raio de colisão da nave for menor que sua soma com o raio do metroro
+            if (this.vidas == 0) {
+                //se não houver mais vidas escreve na tela fim de jogo
+                this.estado = 2;
+                this.vivo = false;
+            } else {
+                //se ainda houver vidas
+                this.vidas--; //uma vida é perdida
+                nave = new Nave(); //e a nave volta para o centro da tela
+            }
+        }
+    }
 
     //função do fremework p5 que fica em loop durante a execução do sketch
     draw_game() {
@@ -142,8 +175,11 @@ class Grift{
             //escreve na tela os pontos do jogador e sua vidas restantes
             textSize(25);
             fill(255);
-            text(this.pontos, 20, 30);
-            text(this.vidas, 20, 60);
+            text("Pontos " + this.pontos, 20, 30);
+            text("Vidas " + this.vidas, 20, 60);
+            text("Meteoros " + this.meteoros.length, 20, 90);
+            text("Individuo " + this.num, 20, 120);
+            
 
             this.nave.mostrar();    // Desenha a nave
             this.nave.mostrarSensor();
@@ -158,7 +194,41 @@ class Grift{
             this.pontuacao();
         }
     }
-    
+
+    draw_debug(){
+        for(let i=0; i < this.meteoros.length; i++){
+            stroke(100,0,0);
+            line(this.meteoros[i].posicao.x,
+                this.meteoros[i].posicao.y,
+                this.meteoros[i].posicao.x + this.meteoros[i].velocidade.x*20,
+                this.meteoros[i].posicao.y + this.meteoros[i].velocidade.y*20);
+            noFill();
+            ellipse(this.meteoros[i].posicao.x,
+                this.meteoros[i].posicao.y, 
+                this.meteoros[i].r+ 200, this.meteoros[i].r+ 200); 
+
+            stroke(0,100,0);
+
+            line(this.nave.posicao.x, this.nave.posicao.y,
+                this.nave.posicao.x + this.nave.velocidade.x*30,
+                this.nave.posicao.y + this.nave.velocidade.y*30);
+        }
+        stroke(255);
+        text("tiros " + this.tiros.length, 20, 150);
+        text("Ang " + 180/PI* this.nave.angulo_obj(this.meteoros[this.nave.mais_proximo]) + 
+        "\ngraus "+ 180/PI *this.nave.angulo, 20, 180);
+        if(this.tiros.length)
+        text("\n\nvel "+ sqrt(this.tiros[0].velocidade.y**2)//    + this.tiros[0].velocidade.y**2) 
+        , 20, 180);
+
+        stroke(255,0,0);
+        if(this.meteoros.length != 0){
+            ellipse(this.meteoros[this.nave.mais_proximo].posicao.x,
+                this.meteoros[this.nave.mais_proximo].posicao.y, 
+                this.meteoros[this.nave.mais_proximo].r+ 200, this.meteoros[this.nave.mais_proximo].r+ 200);
+        }
+
+    }
     //função do framework p5 que verifica se alguma tecla foi 'despressionada'
     released() {
         /*se houver sido uma das diressionais esquerdo ou direito
