@@ -39,8 +39,6 @@ class Grift{
             this.estado = 1;
         } else if (this.estado == 2) {
             this.estado = 3;
-        } else if (this.estado == 3) {
-            recarregar();
         }
     }
     inserirComando(frente, esquerda, direita, tiro) {
@@ -55,7 +53,7 @@ class Grift{
             this.nave.k = -0.03;
         } else if (tiro) {
             let novo_tiro = new Tiro(this.nave.posicao, this.nave.angulo);
-            this.tiros.push(this.novo_tiro);
+            this.tiros.push(novo_tiro);
         }
     }
     removerComando() {

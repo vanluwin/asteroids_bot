@@ -14,9 +14,9 @@ function setup() {
 function draw(){
     let melhor_indice=0;
     let mais_pontos;
-    for(let i=1; i<grift.length;i++){
+    for(let i=0; i<grift.length;i++){
         grift[i].update();
-       // grift[i].comando();
+        grift[i].comando();
         if(grift[i].pontos > grift[melhor_indice].pontos && grift[i].vidas>0)
             melhor_indice = i;
     }
