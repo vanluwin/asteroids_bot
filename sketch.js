@@ -7,6 +7,7 @@ function setup() {
     for(let i=0; i<5;i++){
         grift.push(new Grift());
         grift[i].num = i;
+        console.log(Math.floor(grift[i].color)+" indice = " + i);
         //setInterval(grift[i].criarMeteoro, grift[i].tempo);
     }
 }
@@ -19,6 +20,7 @@ function draw(){
         grift[i].comando();
         if(grift[i].pontos > grift[melhor_indice].pontos && grift[i].vidas>0)
             melhor_indice = i;
+        grift[i].nave.mostrar(grift[i].color);
     }
 
     grift[melhor_indice].draw_game();

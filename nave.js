@@ -90,9 +90,10 @@ class Nave{
 
 
     //define o metodo para mostrar a nave
-    mostrar() {
+    mostrar(cor) {
         stroke(255); //define o contorno com a cor branco
-        fill(0); //preence a forma com preto
+        fill(Math.floor(cor)); //preence a forma com preto
+        //console.log(Math.floor(cor));
         push(); //começa uma nova rotina de desenho
         translate(this.posicao.x, this.posicao.y); //muda o centro de cordenadas da tela para a atual posição da nave
         rotate(this.angulo); //roda a nave em seu atual angulo

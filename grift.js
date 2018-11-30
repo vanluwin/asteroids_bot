@@ -16,7 +16,7 @@ class Grift{
         //cria um objeto nave
         this.nave = new Nave();
 
-        this.color = random()*100   ;
+        this.color = Math.random()*100   ;
         //preenche o vetor meteros com obejetos meteoro
         for (let i = 0; i < 5; i++) {
             this.meteoros.push(new Meteoro());
@@ -30,10 +30,10 @@ class Grift{
     }
     comando() {
         this.inserirComando(
-            Math.random() % 2 >= 0.5,
-            Math.random() % 2 >= 0.3,
-            Math.random() % 2 >= 0.3,
-            Math.random() % 2 >= 0.1
+            Math.random() >= 0.5,
+            Math.random() >= 0.3,
+            Math.random() >= 0.3,
+            Math.random() >= 0.1
         );
         if (this.estado == 0) {
             this.estado = 1;
@@ -179,7 +179,7 @@ class Grift{
             text("Individuo " + this.num, 20, 120);
             
 
-            this.nave.mostrar();    // Desenha a nave
+            this.nave.mostrar(this.color);    // Desenha a nave
             this.nave.mostrarSensor();
             //desenha todos os tiros
             for (let i = this.tiros.length - 1; i >= 0; i--) {
