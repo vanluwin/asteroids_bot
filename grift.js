@@ -8,7 +8,7 @@ class Grift{
         this.t_ultimo_met = 0;
         this.pontos = 0;
         this.estado = 0;
-        this.vidas = 2;
+        this.vidas = 0;
         this.max_meteoros = 1;
         //cria o lugar onde o jogo acontecerá
         createCanvas(windowWidth * 0.99, windowHeight * 0.95);
@@ -142,7 +142,7 @@ class Grift{
             meteoro.posicao.x,
             meteoro.posicao.y
         );
-        if (d < nave.r + meteoro.r) {
+        if (d < (nave.r + meteoro.r)) {
             console.log("e morreu " + this.num);
             //se o raio de colisão da nave for menor que sua soma com o raio do metroro
             if (this.vidas == 0) {
