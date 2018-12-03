@@ -16,7 +16,7 @@ class Nave{
         this.sensors = 4;
         this.sensorLen = 200;
         this.sensorPoints = [];
-        this.sensorDistances = [];
+        this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
         this.mais_proximo = 0;
 
         this.mlp = new Mlp(this.sensors, 8, 4);
@@ -46,7 +46,7 @@ class Nave{
     }
 
     sensorDistance(meteoro) {
-        for (let point of this.sensorPoints) {
+        for (let [i, point] of this.sensorPoints.entries()) {
             if (
                 collideLineCircle(
                     this.posicao.x,
@@ -68,6 +68,10 @@ class Nave{
                     meteoro.posicao.x,
                     meteoro.posicao.y
                 );
+                this.sensorDistances[i] = d;
+            }
+            else if(this.sensorDistances[i] > this.sensorLen){
+                this.sensorDistances[i] = this.sensorLen;
             }
         }
     }
