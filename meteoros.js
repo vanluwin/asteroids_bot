@@ -1,11 +1,11 @@
 class Meteoro {
     //define o construtor meteoro
-    constructor(posicao, r, nave) {
+    constructor(posicao, r, nave, velocidade) {
         if (posicao) {
             //se foi passado uma posição como parâmetro a posição passada é copida
             this.posicao = posicao.copy();
         } else {
-            this.posicao = createVector(random(width), random(height)); //se não uma posição aleatoria é gerada
+            this.posicao = createVector((random(width) + 300) %width, (random(height) + 300)%height); //se não uma posição aleatoria é gerada
         }
 
         if (r) {
@@ -22,7 +22,12 @@ class Meteoro {
             );
         }
 
-        this.velocidade = p5.Vector.random2D(); //define a aceleração como um vetor aleatorio
+        if (velocidade) {
+            this.velocidade = velocidade;
+
+        }
+        else
+            this.velocidade = p5.Vector.random2D(); //define a aceleração como um vetor aleatorio
         this.total = floor(random(5, 15)); //toral de pontos para o desenho do meteoro como um numero aleatorio
 
         //vetor que amazenará numeros aleatorios para ligar os pontos e dar forma ao contorno do meteoro
