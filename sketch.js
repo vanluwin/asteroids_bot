@@ -17,8 +17,7 @@ function draw(){
     let mais_pontos;
     for(let i=0; i<grift.length;i++){
         grift[i].update();
-        grift[i].nave.
-        //grift[i].comando();
+        grift[i].comando();
         if(grift[i].pontos > grift[melhor_indice].pontos && grift[i].vidas>=0)
             melhor_indice = i;
         //grift[i].nave.mostrar(grift[i].color);
