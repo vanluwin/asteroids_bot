@@ -27,7 +27,7 @@ class Grift{
         //setInterval(comando, 120);
         //setInterval(removerComando, 1000);
     }
-    comando() {
+    comandoRandom() {
         this.inserirComando([
             Math.random() >= 0.5,
             Math.random() >= 0.3,
@@ -88,7 +88,7 @@ class Grift{
         if(this.estado != 3){
             this.nave.sensorDistances = [this.nave.sensorLen,this.nave.sensorLen,this.nave.sensorLen,this.nave.sensorLen];
             for (let i = 0; i < this.meteoros.length; i++) {
-                if(stop)
+                if(!stop)
                     this.meteoros[i].update(); //metodo para mover o meteoro
                 this.nave.sensorDistance(this.meteoros[i]);     // Verifica a distancia do meteroro para os sensores
             }
@@ -136,7 +136,7 @@ class Grift{
         }
     }
 
-    comando_mlp(){
+    comandoMlp(){
         this.inserirComando(this.nave.mlp.predict([...this.nave.sensorDistances,1]));
     }    
 

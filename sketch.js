@@ -18,20 +18,19 @@ function draw(){
     let mais_pontos;
     for(let i=0; i<grift.length;i++){
         grift[i].update(stop);
-        console.log(grift[0].nave.sensorDistances);
-        grift[i].comando_mlp();
+        grift[i].comandoMlp();
         if(grift[i].pontos > grift[melhor_indice].pontos && grift[i].vidas>=0)
             melhor_indice = i;
-        //grift[i].nave.mostrar(grift[i].color);
+        grift[i].nave.mostrar(grift[i].color);
     }
     grift[melhor_indice].draw_game();
 }
 function keyPressed(){
-    if(key == "p"){
-        this.stop=true;
+    if(event.key == "p"){
+        stop=!stop;
     }
-    if(key == "o"){
-        this.stop=false;
+    if(event.key == "s"){
+        console.log(grift[0].nave.sensorDistances);
     }
     if(parseInt(key,10) < grift.length)
         sel_jogo = parseInt(key,10);
