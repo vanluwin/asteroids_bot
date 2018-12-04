@@ -6,16 +6,12 @@ class Cromo {
     }
 
     mutate() {
-        let indice1 = Math.floor((Math.random() * this.weights.length));
-        let indice2 = Math.floor((Math.random() * this.weights.length));
-
-        while(indice1 === indice2) { 
-            indice2 = Math.floor((Math.random() * this.weights.length));
+        console.log("MUTOU");
+        for(let i=0; i < this.weights.length; i++){
+            if(Math.random()<1){
+                this.weights[i] = Math.random();
+            }
         }
-
-        let aux = this.weights[indice1]; 
-        this.weights[indice1] = this.weights[indice2];
-        this.weights[indice2] = aux;
     }
 
     cruzamento(cromo) {
@@ -37,7 +33,7 @@ class Population {
 
         this.popSize = this.individuos.length;
         this.generationNumber = 0;
-        this.tx_cruzamento = 0.05;
+        this.tx_cruzamento = 0.0;
     }
 
     seleciona_roleta() {
@@ -99,11 +95,17 @@ class Population {
         if(this.individuos.length >0)
             filhos.push(this.individuos[this.individuos.length-1]);
         
-        console.log(filhos);
+        console.log(filhos.length);
         // Mutacao nos filhos
+        //5% de chance de mutar
         filhos.forEach(filho => {
-            filho.mutate();
+            if(Math.random()<1)
+                filho.mutate();
         });
+
+        // for(let i = 0; i<filhos.length; i++)
+        //     if(Math.random()<1)
+        //          filhos[i].mutate();
 
         elite.forEach(joao => {
             filhos.push(joao);

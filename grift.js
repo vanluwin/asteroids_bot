@@ -202,8 +202,6 @@ class Grift{
             text("Pontos " + this.pontos, 20, 30);
             text("Vidas " + this.vidas, 20, 60);
             text("Meteoros " + this.meteoros.length, 20, 90);
-            text("Individuo " + this.num, 20, 120);
-            text("Geração " + this.geracao, 20, 150);
             
 
             this.nave.mostrar(this.color);    // Desenha a nave

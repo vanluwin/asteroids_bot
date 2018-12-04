@@ -9,8 +9,7 @@ function setup() {
     for(let i=0; i<30;i++){
         grift.push(new Grift(geracao));
         grift[i].num = i;
-        console.log(Math.floor(grift[i].color)+" indice = " + i);
-
+        //console.log(Math.floor(grift[i].color)+" indice = " + i);
     }
 }
 
@@ -28,10 +27,15 @@ function draw(){
     grift[melhor_indice].draw_game();
     for(let i=0; i<grift.length;i++)    
         if(grift[i].nave.angulo!=0){
-            background(200,0,0);
+//            background(200,0,0);
             while(1)
                 console.log("eita porra");
         }
+        
+    textSize(25);
+    fill(255); 
+    text("Individuo " + melhor_indice, 20, 120);
+    text("Geração " + geracao, 20, 150);
     
     // for(let i=0; i<grift.length;i++)
     //    grift[i].nave.mostrar(grift[i].color);
@@ -52,11 +56,10 @@ function draw(){
        
         let fetos = population.generation();
         
-        console.log("grift");
-        console.log(fetos);
+        // console.log("grift");
+        // console.log(fetos);
         for(let i=0; i<grift.length; i++){
             grift[i] = new Grift(geracao);
-            console.log(i);
             grift[i].nave.mlp.setWeights(fetos[i].weights);
         } 
         geracao++;
