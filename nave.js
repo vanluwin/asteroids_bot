@@ -59,7 +59,7 @@ class Nave{
                         this.posicao.y,
                     meteoro.posicao.x,
                     meteoro.posicao.y,
-                    meteoro.r
+                    meteoro.r*2
                 )
             ) {
                 let d = dist(
