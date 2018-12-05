@@ -1,5 +1,5 @@
 class Grift{
-    constructor(geracao){
+    constructor(){
         this.num;
         this.meteoros = [];
         this.tiros = [];
@@ -10,7 +10,6 @@ class Grift{
         this.vidas = 0;
         this.vivo = true;
         this.max_meteoros = 1;
-        this.geracao = geracao;
 
         //cria o lugar onde o jogo acontecerá
         createCanvas(windowWidth * 0.99, windowHeight * 0.95);
@@ -86,6 +85,19 @@ class Grift{
             // }
         }
     }
+    
+    comandoMlp(){
+        let comando =this.nave.mlp.predict(this.nave.sensorDistances); 
+        // let comando =[
+        //     predicao[0]>0.5,
+        //     predicao[1]>0.5,
+        //     predicao[2]>0.5,
+        //     // predicao[1]>predicao[2],
+        //     // predicao[2]>predicao[1],
+        //     predicao[3]>0.5
+        // ];
+        this.inserirComando(comando);
+    }
     //função para adicionar pontos ao placar
     somarPontos() {
         this.pontos += 20;
@@ -152,15 +164,6 @@ class Grift{
         }
     }
 
-    comandoMlp(){
-        let comando =[
-            this.nave.mlp.predict([...this.nave.sensorDistances, 1]).selection.data[0]>0.5,
-            this.nave.mlp.predict([...this.nave.sensorDistances, 1]).selection.data[1]>0.5,
-            this.nave.mlp.predict([...this.nave.sensorDistances, 1]).selection.data[2]>0.5,
-            this.nave.mlp.predict([...this.nave.sensorDistances, 1]).selection.data[3]>0.5
-        ];
-        this.inserirComando(comando);
-    }    
 
     //define o metodo que verifica se a nave foi atingida
     atingida(nave,meteoro) {
@@ -172,7 +175,7 @@ class Grift{
             meteoro.posicao.y
         );
         if (d < (nave.r + meteoro.r)) {
-            console.log("e morreu " + this.num);
+           // console.log("e morreu " + this.num);
             //se o raio de colisão da nave for menor que sua soma com o raio do metroro
             if (this.vidas == 0) {
                 //se não houver mais vidas escreve na tela fim de jogo
@@ -200,8 +203,7 @@ class Grift{
             textSize(25);
             fill(255);
             text("Pontos " + this.pontos, 20, 30);
-            text("Vidas " + this.vidas, 20, 60);
-            text("Meteoros " + this.meteoros.length, 20, 90);
+            text("Meteoros " + this.meteoros.length, 20, 60);
             
 
             this.nave.mostrar(this.color);    // Desenha a nave

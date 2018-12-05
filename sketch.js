@@ -5,40 +5,50 @@ let sel_jogo =1;
 let grift = [];
 let stop = false;
 let geracao=0;
+
 function setup() {
-    for(let i=0; i<30;i++){
+    for(let i=0; i<150;i++){
         grift.push(new Grift(geracao));
         grift[i].num = i;
         //console.log(Math.floor(grift[i].color)+" indice = " + i);
     }
+    frameRate(60);
 }
 
 function draw(){
     let melhor_indice=0;
+    let N_vivos = 0;
     for(let i=0; i<grift.length;i++){
         grift[i].update(stop);
         grift[i].comandoMlp();
-
         //grift[i].comandoRandom();
+        if(grift[i].vivo){
+            N_vivos++;    
+        }
+        else if(grift[i].meteoros.length>0)
+                grift[i].meteoros = [];
+
         if(grift[i].pontos > grift[melhor_indice].pontos && grift[i].vivo)
             melhor_indice = i;
         
     }
     grift[melhor_indice].draw_game();
-    for(let i=0; i<grift.length;i++)    
-        if(grift[i].nave.angulo!=0){
-//            background(200,0,0);
-            while(1)
-                console.log("eita porra");
-        }
-        
+    // for(let i=0; i<grift.length;i++){
+    //     if(grift[i].nave.angulo!=0){
+    //        background(200,0,0);
+    //         while(1)
+    //            console.log("eita porra");
+    //     }
+    // }
     textSize(25);
     fill(255); 
-    text("Individuo " + melhor_indice, 20, 120);
+    text("Individuo " + melhor_indice, 20, 90);
+    text("Vivos " + N_vivos, 20, 120);
     text("Geração " + geracao, 20, 150);
-    
-    // for(let i=0; i<grift.length;i++)
-    //    grift[i].nave.mostrar(grift[i].color);
+
+    for(let i=0; i<grift.length;i++)
+        if(grift[i].vivo)
+            grift[i].nave.mostrar(grift[i].color);
 //    console.log("vivos?"+!vivos(grift));
 
 
@@ -46,20 +56,17 @@ function draw(){
         let popu = [];
         
         for(let i=0; i<grift.length;i++){
-            let cromo = new Cromo();
-            cromo.weights = grift[i].nave.mlp.getWeights();
-            cromo.aptidao = grift[i].pontos;
+            let cromo = new Cromo(grift[i].nave.mlp.getWeights(), grift[i].pontos);
             // console.log(cromo);
             popu.push(cromo);
         }
         let population = new Population(popu);
-       
+       console.log(popu);
         let fetos = population.generation();
         
-        // console.log("grift");
         // console.log(fetos);
         for(let i=0; i<grift.length; i++){
-            grift[i] = new Grift(geracao);
+            grift[i] = new Grift();
             grift[i].nave.mlp.setWeights(fetos[i].weights);
         } 
         geracao++;

@@ -1,19 +1,36 @@
 class Cromo {
-    constructor(weights = 0, pontuacao = 0) {
+    constructor(weights=0, pontuacao=0) {
         this.weights = weights;
        
         this.aptidao = pontuacao;
     }
 
     mutate() {
-        console.log("MUTOU");
+        // let papapa = this.weights;        
+        // let indice1 = Math.floor((Math.random() * this.weights.length));
+        // let indice2 = Math.floor((Math.random() * this.weights.length));
+        
+        // while(indice1 === indice2) { 
+        //     indice2 = Math.floor((Math.random() * this.weights.length));
+        // }
+
+        // let aux = this.weights[indice1]; 
+        // this.weights[indice1] = this.weights[indice2];
+        // this.weights[indice2] = aux;
+
+        // console.log(aux)
+        // for(let i = 0; i<papapa.length; i++){
+        //     // console.log(papapa[i] ,this.weights[i]);
+        //     if(papapa[i]!=this.weights[i])
+        //         console.log("sadasdasd");
+        // }
+       console.log("MUTOU");
         for(let i=0; i < this.weights.length; i++){
-            if(Math.random()<1){
-                this.weights[i] = Math.random();
+            if(Math.random()<0.05){
+                this.weights[i] = Math.random()*2-1;
             }
         }
     }
-
     cruzamento(cromo) {
         let pivot = Math.round(this.weights.length / 2);
         let child1 = this.weights.slice(0, pivot).concat(cromo.weights.slice(pivot, this.weights.length));
@@ -33,7 +50,7 @@ class Population {
 
         this.popSize = this.individuos.length;
         this.generationNumber = 0;
-        this.tx_cruzamento = 0.0;
+        this.tx_cruzamento = 0.1;
     }
 
     seleciona_roleta() {
@@ -95,24 +112,28 @@ class Population {
         if(this.individuos.length >0)
             filhos.push(this.individuos[this.individuos.length-1]);
         
-        console.log(filhos.length);
+        console.log("Nova geracao: \n\tFilhos: " + filhos.length + "\n\tElite: " + elite.length);
+
+        filhos.push(...elite);
+
         // Mutacao nos filhos
-        //5% de chance de mutar
-        filhos.forEach(filho => {
-            if(Math.random()<1)
+        this.individuos = filhos.map(filho => {
+            if(Math.random()<0.05)
                 filho.mutate();
+            return filho;
         });
+        // for(let i=0 ; i < filhos.length ; i++){
+        //     if(Math.random()<0.05)
+        //         filhos[i].mutate();
+            
+        //     this.individuos[i] = filhos[i]; 
+        // }
 
-        // for(let i = 0; i<filhos.length; i++)
-        //     if(Math.random()<1)
-        //          filhos[i].mutate();
 
-        elite.forEach(joao => {
-            filhos.push(joao);
-        });
-
-        this.individuos = filhos;
-        this.individuos.sort( () => ( 0.5 - Math.random()) );
+        console.log(this.individuos);
+        
+        this.individuos.sort( _ => ( 0.5 - Math.random()) );
+        console.log(this.individuos);
         return this.individuos;
 
     }
