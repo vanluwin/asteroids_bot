@@ -28,7 +28,7 @@ function draw(){
         else if(grift[i].meteoros.length>0)
                 grift[i].meteoros = [];
 
-        if(grift[i].pontos > grift[melhor_indice].pontos && grift[i].vivo)
+        if((grift[i].pontos > grift[melhor_indice].pontos) && grift[i].vivo)
             melhor_indice = i;
         
     }
@@ -45,12 +45,11 @@ function draw(){
     text("Individuo " + melhor_indice, 20, 90);
     text("Vivos " + N_vivos, 20, 120);
     text("Geração " + geracao, 20, 150);
+    // text("Melhor da gen " + geracao, 20, 180);
 
     for(let i=0; i<grift.length;i++)
         if(grift[i].vivo)
             grift[i].nave.mostrar(grift[i].color);
-//    console.log("vivos?"+!vivos(grift));
-
 
     if(!vivos(grift)){   
         let popu = [];

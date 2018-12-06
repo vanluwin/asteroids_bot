@@ -65,6 +65,10 @@ class Grift{
                 let novo_tiro = new Tiro(this.nave.posicao, this.nave.angulo);
                 this.tiros.push(novo_tiro);
             }
+            else if(this.nave.dist(this.tiros[this.tiros.length-1])>this.nave.sensorLen){
+                let tiro = new Tiro(this.nave.posicao, this.nave.angulo);
+                this.tiros.push(tiro);
+            }
         }
     }
     removerComando() {
@@ -87,15 +91,7 @@ class Grift{
     }
     
     comandoMlp(){
-        let comando =this.nave.mlp.predict(this.nave.sensorDistances); 
-        // let comando =[
-        //     predicao[0]>0.5,
-        //     predicao[1]>0.5,
-        //     predicao[2]>0.5,
-        //     // predicao[1]>predicao[2],
-        //     // predicao[2]>predicao[1],
-        //     predicao[3]>0.5
-        // ];
+        let comando =this.nave.mlp.predict(this.nave.sensorDistances.map(el => el/this.nave.sensorLen)); 
         this.inserirComando(comando);
     }
     //função para adicionar pontos ao placar
@@ -186,37 +182,32 @@ class Grift{
         }
     }
 
-    //função do fremework p5 que fica em loop durante a execução do sketch
     draw_game() {
-        //define o fundo do canvas como preto
-        background(this.color);
         if(this.estado != 3){
+            background(this.color);
             for (let i = 0; i < this.meteoros.length; i++) 
                 this.meteoros[i].mostrar(); //metodo para mostrar o meteoro
         }
-        if (this.estado == 0) {
-            this.menu();        
-        }
-
-        else if (this.estado == 1) {
+        if (this.estado == 1) {
             //escreve na tela os pontos do jogador e sua vidas restantes
             textSize(25);
             fill(255);
             text("Pontos " + this.pontos, 20, 30);
             text("Meteoros " + this.meteoros.length, 20, 60);
             
-
             this.nave.mostrar(this.color);    // Desenha a nave
             this.nave.mostrarSensor();
             //desenha todos os tiros
             for (let i = this.tiros.length - 1; i >= 0; i--) {
                 this.tiros[i].mostrar(); //metodo pra mostrar os tiros
             }
-    
         } else if (this.estado == 2) {
             this.gameOver();
         } else if (this.estado == 3) {
-            this.pontuacao();
+            // this.pontuacao();
+            textSize(25);
+            fill(255,0,0)
+            text("Morto com " + this.pontos+" pontos", windowWidth/2-50, windowHeight-100);
         }
     }
 

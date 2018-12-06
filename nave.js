@@ -14,7 +14,7 @@ class Nave{
         };
 
         this.sensors = 4;
-        this.sensorLen = 200;
+        this.sensorLen = 1000;
         this.sensorPoints = [];
         this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
         this.mais_proximo = 0;
@@ -135,8 +135,8 @@ class Nave{
         pop(); //encerra a nova rotina de desenho a retorna a padrão
     }
 
-    dist(meteoro){
-        return dist(this.posicao.x, this.posicao.y, meteoro.posicao.x, meteoro.posicao.y);
+    dist(objeto){
+        return dist(this.posicao.x, this.posicao.y, objeto.posicao.x, objeto.posicao.y);
     }
 
     angulo_obj(objeto){

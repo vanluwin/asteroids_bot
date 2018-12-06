@@ -14,7 +14,6 @@ class Mlp {
 
     // Faz uma predição
     predict(inp) {
-        inp = inp.map(el => el/200);
         let net1 = this.degrau([...nj.dot([...inp, this.bias], this.w1).selection.data]);
         let net2 = this.degrau([...nj.dot(net1, this.w2).selection.data]);
         // let net1 = [...nj.dot([...inp, this.bias], this.w1).selection.data];
