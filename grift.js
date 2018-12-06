@@ -19,7 +19,7 @@ class Grift{
 
         this.color = Math.random()*100;
         //preenche o vetor meteros com objetos meteoro
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 150; i++) {
             this.meteoros.push(new Meteoro());
         }
 
@@ -65,7 +65,7 @@ class Grift{
                 let novo_tiro = new Tiro(this.nave.posicao, this.nave.angulo);
                 this.tiros.push(novo_tiro);
             }
-            else if(this.nave.dist(this.tiros[this.tiros.length-1])>this.nave.sensorLen){
+            else if(this.nave.dist(this.tiros[this.tiros.length-1])>this.nave.sensorLen ||this.nave.dist(this.tiros[this.tiros.length-1])>400){
                 let tiro = new Tiro(this.nave.posicao, this.nave.angulo);
                 this.tiros.push(tiro);
             }
@@ -183,8 +183,8 @@ class Grift{
     }
 
     draw_game() {
+        background(this.color);
         if(this.estado != 3){
-            background(this.color);
             for (let i = 0; i < this.meteoros.length; i++) 
                 this.meteoros[i].mostrar(); //metodo para mostrar o meteoro
         }
@@ -205,9 +205,6 @@ class Grift{
             this.gameOver();
         } else if (this.estado == 3) {
             // this.pontuacao();
-            textSize(25);
-            fill(255,0,0)
-            text("Morto com " + this.pontos+" pontos", windowWidth/2-50, windowHeight-100);
         }
     }
 

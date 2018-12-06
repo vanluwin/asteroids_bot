@@ -16,7 +16,10 @@ class Nave{
         this.sensors = 4;
         this.sensorLen = 1000;
         this.sensorPoints = [];
-        this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
+        if(this.sensors==4)
+            this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
+        if(this.sensors==8)
+            this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
         this.mais_proximo = 0;
 
         this.mlp = new Mlp(this.sensors, 8, 4);

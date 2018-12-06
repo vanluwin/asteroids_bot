@@ -17,6 +17,7 @@ function setup() {
 
 function draw(){
     let melhor_indice=0;
+    let melhor_indice_vivo=0;
     let N_vivos = 0;
     for(let i=0; i<grift.length;i++){
         grift[i].update(stop);
@@ -28,11 +29,14 @@ function draw(){
         else if(grift[i].meteoros.length>0)
                 grift[i].meteoros = [];
 
-        if((grift[i].pontos > grift[melhor_indice].pontos) && grift[i].vivo)
+        if((grift[i].pontos >= (grift[melhor_indice_vivo].pontos * grift[melhor_indice_vivo].vivo))){
+            melhor_indice_vivo = i;
+        }
+        if((grift[i].pontos >= grift[melhor_indice].pontos)){
             melhor_indice = i;
-        
+        }
     }
-    grift[melhor_indice].draw_game();
+    grift[melhor_indice_vivo].draw_game();
     // for(let i=0; i<grift.length;i++){
     //     if(grift[i].nave.angulo!=0){
     //        background(200,0,0);
@@ -42,10 +46,13 @@ function draw(){
     // }
     textSize(25);
     fill(255); 
-    text("Individuo " + melhor_indice, 20, 90);
+    noStroke();
+    text("Individuo " + melhor_indice_vivo, 20, 90);
     text("Vivos " + N_vivos, 20, 120);
     text("Geração " + geracao, 20, 150);
     // text("Melhor da gen " + geracao, 20, 180);
+    if(melhor_indice!=melhor_indice_vivo)
+        text("Melhor morto com " + grift[melhor_indice].pontos +" pontos", windowWidth/2-150, windowHeight-100);
 
     for(let i=0; i<grift.length;i++)
         if(grift[i].vivo)
@@ -56,11 +63,11 @@ function draw(){
         
         for(let i=0; i<grift.length;i++){
             let cromo = new Cromo(grift[i].nave.mlp.getWeights(), grift[i].pontos);
-            // console.log(cromo);
+
             popu.push(cromo);
         }
         let population = new Population(popu);
-       console.log(popu);
+       //console.log(popu);
         let fetos = population.generation();
         
         // console.log(fetos);

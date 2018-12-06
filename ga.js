@@ -24,7 +24,7 @@ class Cromo {
         //     if(papapa[i]!=this.weights[i])
         //         console.log("sadasdasd");
         // }
-       console.log("MUTOU");
+       //console.log("MUTOU");
         for(let i=0; i < this.weights.length; i++){
             if(Math.random()<0.05){
                 this.weights[i] = Math.random()*2-1;
@@ -130,10 +130,10 @@ class Population {
         // }
 
 
-        console.log(this.individuos);
+        //console.log(this.individuos);
         
         this.individuos.sort( _ => ( 0.5 - Math.random()) );
-        console.log(this.individuos);
+        //console.log(this.individuos);
         return this.individuos;
 
     }
