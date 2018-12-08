@@ -5,7 +5,8 @@ let sel_jogo =1;
 let grift = [];
 let stop = false;
 let geracao=0;
-
+let melhorDaHistoria = 0;
+let geracaoMelhorHist=0;
 function setup() {
     for(let i=0; i<150;i++){
         grift.push(new Grift(geracao));
@@ -29,7 +30,7 @@ function draw(){
         else if(grift[i].meteoros.length>0)
                 grift[i].meteoros = [];
 
-        if((grift[i].pontos >= (grift[melhor_indice_vivo].pontos * grift[melhor_indice_vivo].vivo))){
+        if((grift[i].pontos* grift[i].vivo) > (grift[melhor_indice_vivo].pontos*grift[melhor_indice_vivo].vivo)){
             melhor_indice_vivo = i;
         }
         if((grift[i].pontos >= grift[melhor_indice].pontos)){
@@ -37,20 +38,17 @@ function draw(){
         }
     }
     grift[melhor_indice_vivo].draw_game();
-    // for(let i=0; i<grift.length;i++){
-    //     if(grift[i].nave.angulo!=0){
-    //        background(200,0,0);
-    //         while(1)
-    //            console.log("eita porra");
-    //     }
-    // }
+    if(grift[melhor_indice].pontos > melhorDaHistoria){
+        melhorDaHistoria = grift[melhor_indice].pontos;
+        geracaoMelhorHist=geracao;
+    }
     textSize(25);
     fill(255); 
     noStroke();
     text("Individuo " + melhor_indice_vivo, 20, 90);
     text("Vivos " + N_vivos, 20, 120);
     text("Geração " + geracao, 20, 150);
-    // text("Melhor da gen " + geracao, 20, 180);
+    text("Record: " + melhorDaHistoria +"@"+geracaoMelhorHist, 20, 180);
     if(melhor_indice!=melhor_indice_vivo)
         text("Melhor morto com " + grift[melhor_indice].pontos +" pontos", windowWidth/2-150, windowHeight-100);
 

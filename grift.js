@@ -175,8 +175,7 @@ class Grift{
             //se o raio de colisão da nave for menor que sua soma com o raio do metroro
             if (this.vidas == 0) {
                 //se não houver mais vidas escreve na tela fim de jogo
-                this.estado = 2;
-
+                this.estado = 3;
                 this.vivo = false;
             } 
         }
@@ -201,10 +200,8 @@ class Grift{
             for (let i = this.tiros.length - 1; i >= 0; i--) {
                 this.tiros[i].mostrar(); //metodo pra mostrar os tiros
             }
-        } else if (this.estado == 2) {
-            this.gameOver();
         } else if (this.estado == 3) {
-            // this.pontuacao();
+            console.log("TA ERRADO");
         }
     }
 
