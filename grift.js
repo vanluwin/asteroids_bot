@@ -1,7 +1,6 @@
 class Grift{
     constructor(){
         this.num;
-        this.nave;
         this.meteoros = [];
         this.tiros = [];
         this.tempo = 10000;
@@ -9,31 +8,33 @@ class Grift{
         this.pontos = 0;
         this.estado = 0;
         this.vidas = 0;
+        this.vivo = true;
         this.max_meteoros = 1;
+
         //cria o lugar onde o jogo acontecerá
         createCanvas(windowWidth * 0.99, windowHeight * 0.95);
 
         //cria um objeto nave
         this.nave = new Nave();
 
-        this.color = Math.random()*100   ;
-        //preenche o vetor meteros com obejetos meteoro
-        for (let i = 0; i < 5; i++) {
+        this.color = Math.random()*100;
+        //preenche o vetor meteros com objetos meteoro
+        for (let i = 0; i < 150; i++) {
             this.meteoros.push(new Meteoro());
         }
 
-        //cria um interlo de tempo no qual serão adicionados novos meteros
+        //cria um intervalo de tempo no qual serão adicionados novos meteros
 
         //inserirComando(AG.frente, AG.esquerda, AG.direita, AG.tiro);
         //setInterval(comando, 120);
         //setInterval(removerComando, 1000);
     }
-    comando() {
-        this.inserirComando(
+    comandoRandom() {
+        this.inserirComando([
             Math.random() >= 0.5,
             Math.random() >= 0.3,
             Math.random() >= 0.3,
-            Math.random() >= 0.1
+            Math.random() >= 0.1]
         );
         if (this.estado == 0) {
             this.estado = 1;
@@ -41,19 +42,33 @@ class Grift{
             this.estado = 3;
         }
     }
-    inserirComando(frente, esquerda, direita, tiro) {
-        if (frente) {
+
+    inserirComando(comandos) {
+        if (comandos[0]) {
             //se foi seta para cima addiona aceleração a nave
             this.nave.boosting(true);
-        } else if (direita) {
+        }
+        if (comandos[1]) {
             //se foi seta para direita adiona um multiplicador positivo ao angulo para que a nave rode para a direita
             this.nave.k = 0.03;
-        } else if (esquerda) {
+        }
+        if (comandos[2]) {
             //se foi seta para esquerda adiona um multiplicador negativo ao angulo para que a nave rode para a esquerda
             this.nave.k = -0.03;
-        } else if (tiro) {
-            let novo_tiro = new Tiro(this.nave.posicao, this.nave.angulo);
-            this.tiros.push(novo_tiro);
+        }
+        if (comandos[1]&&comandos[2]) {
+            //se foi seta para esquerda adiona um multiplicador negativo ao angulo para que a nave rode para a esquerda
+            this.nave.k = 0.0;
+        }
+        if (comandos[3]) {
+            if(this.tiros.length<1){
+                let novo_tiro = new Tiro(this.nave.posicao, this.nave.angulo);
+                this.tiros.push(novo_tiro);
+            }
+            else if(this.nave.dist(this.tiros[this.tiros.length-1])>this.nave.sensorLen ||this.nave.dist(this.tiros[this.tiros.length-1])>400){
+                let tiro = new Tiro(this.nave.posicao, this.nave.angulo);
+                this.tiros.push(tiro);
+            }
         }
     }
     removerComando() {
@@ -67,13 +82,17 @@ class Grift{
         //adiciona no vetor meteoros um novo meteoro
         if ((t - this.t_ultimo_met) > this.tempo) {
             this.t_ultimo_met = t;
-            this.meteoros.push(new Meteoro(false, false, this.nave,createVector(10,0)
-                                ));
+            this.meteoros.push(new Meteoro());
             //diminui o tempo de criação de novos meteoros ate atingir 0.5s
             // if (this.tempo > 450) {
             //     this.tempo -= 450;
             // }
         }
+    }
+    
+    comandoMlp(){
+        let comando =this.nave.mlp.predict(this.nave.sensorDistances.map(el => el/this.nave.sensorLen)); 
+        this.inserirComando(comando);
     }
     //função para adicionar pontos ao placar
     somarPontos() {
@@ -84,17 +103,25 @@ class Grift{
         location.reload();
     }
 
-    update(){
+    update(stop){
+        if (this.estado == 0) {
+            this.estado = 1;
+        }
+        else if (this.estado == 2) {
+            this.estado = 3;
+        } 
         if(this.estado != 3){
+            this.nave.sensorDistances = [this.nave.sensorLen,this.nave.sensorLen,this.nave.sensorLen,this.nave.sensorLen];
             for (let i = 0; i < this.meteoros.length; i++) {
-                this.meteoros[i].update(); //metodo para mover o meteoro
+                if(!stop)
+                    this.meteoros[i].update(); //metodo para mover o meteoro
                 this.nave.sensorDistance(this.meteoros[i]);     // Verifica a distancia do meteroro para os sensores
             }
             this.nave.update();     // Move a nave
             this.nave.edges();      // Verfica se a nave esta nas bordas da tela
             //this.nave.auto_pilot(this.meteoros,this.tiros);
-        }
 
+        }
         if (this.estado == 1) {
             //this.draw_debug();  
             if(this.meteoros.length < this.max_meteoros)
@@ -128,7 +155,8 @@ class Grift{
                     }
                 }
             }
-            this.nave.sensorDistances = [];
+            
+            //this.nave.sensorDistances = [];
         }
     }
 
@@ -143,53 +171,37 @@ class Grift{
             meteoro.posicao.y
         );
         if (d < (nave.r + meteoro.r)) {
-            console.log("e morreu " + this.num);
+           // console.log("e morreu " + this.num);
             //se o raio de colisão da nave for menor que sua soma com o raio do metroro
             if (this.vidas == 0) {
                 //se não houver mais vidas escreve na tela fim de jogo
-                this.estado = 2;
+                this.estado = 3;
                 this.vivo = false;
-            } else {
-                //se ainda houver vidas
-                this.vidas--; //uma vida é perdida
-                nave = new Nave(); //e a nave volta para o centro da tela
-            }
+            } 
         }
     }
 
-    //função do fremework p5 que fica em loop durante a execução do sketch
     draw_game() {
-        //define o fundo do canvas como preto
         background(this.color);
         if(this.estado != 3){
             for (let i = 0; i < this.meteoros.length; i++) 
                 this.meteoros[i].mostrar(); //metodo para mostrar o meteoro
         }
-        if (this.estado == 0) {
-            this.menu();        
-        }
-
-        else if (this.estado == 1) {
+        if (this.estado == 1) {
             //escreve na tela os pontos do jogador e sua vidas restantes
             textSize(25);
             fill(255);
             text("Pontos " + this.pontos, 20, 30);
-            text("Vidas " + this.vidas, 20, 60);
-            text("Meteoros " + this.meteoros.length, 20, 90);
-            text("Individuo " + this.num, 20, 120);
+            text("Meteoros " + this.meteoros.length, 20, 60);
             
-
             this.nave.mostrar(this.color);    // Desenha a nave
             this.nave.mostrarSensor();
             //desenha todos os tiros
             for (let i = this.tiros.length - 1; i >= 0; i--) {
                 this.tiros[i].mostrar(); //metodo pra mostrar os tiros
             }
-    
-        } else if (this.estado == 2) {
-            this.gameOver();
         } else if (this.estado == 3) {
-            this.pontuacao();
+            console.log("TA ERRADO");
         }
     }
 

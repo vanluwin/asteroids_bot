@@ -14,9 +14,12 @@ class Nave{
         };
 
         this.sensors = 4;
-        this.sensorLen = 200;
+        this.sensorLen = 1000;
         this.sensorPoints = [];
-        this.sensorDistances = [];
+        if(this.sensors==4)
+            this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
+        if(this.sensors==8)
+            this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
         this.mais_proximo = 0;
 
         this.mlp = new Mlp(this.sensors, 8, 4);
@@ -46,7 +49,7 @@ class Nave{
     }
 
     sensorDistance(meteoro) {
-        for (let point of this.sensorPoints) {
+        for (let [i, point] of this.sensorPoints.entries()) {
             if (
                 collideLineCircle(
                     this.posicao.x,
@@ -59,7 +62,7 @@ class Nave{
                         this.posicao.y,
                     meteoro.posicao.x,
                     meteoro.posicao.y,
-                    meteoro.r
+                    meteoro.r*2
                 )
             ) {
                 let d = dist(
@@ -68,6 +71,10 @@ class Nave{
                     meteoro.posicao.x,
                     meteoro.posicao.y
                 );
+                this.sensorDistances[i] = d;
+            }
+            else if(this.sensorDistances[i] > this.sensorLen){
+                this.sensorDistances[i] = this.sensorLen;
             }
         }
     }
@@ -131,8 +138,8 @@ class Nave{
         pop(); //encerra a nova rotina de desenho a retorna a padrão
     }
 
-    dist(meteoro){
-        return dist(this.posicao.x, this.posicao.y, meteoro.posicao.x, meteoro.posicao.y);
+    dist(objeto){
+        return dist(this.posicao.x, this.posicao.y, objeto.posicao.x, objeto.posicao.y);
     }
 
     angulo_obj(objeto){
