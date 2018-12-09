@@ -4,7 +4,7 @@ class Nave{
         this.posicao = createVector(width / 2, height / 2); //define a posição inicial como o centro da tela
         this.velocidade = createVector(0, 0); //define a velocidade como o vetor nulo
         this.acele = createVector(0, 0); //define a aceleração como o vetor nulo
-        this.angulo = 0; //define o angulo inicial como zero
+        this.angulo = 2*Math.PI*Math.random(); //define o angulo inicial como zero
         this.k = 0; //define o multiplicador do angulo inicialmente como zero
         this.r = 20; //raio para ser verificado colisões
         this.isBoosting = false; //define o estado 'está acelerando' como falso
@@ -14,7 +14,7 @@ class Nave{
         };
 
         this.sensors = 4;
-        this.sensorLen = 1000;
+        this.sensorLen = 900;
         this.sensorPoints = [];
         if(this.sensors==4)
             this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
@@ -22,7 +22,11 @@ class Nave{
             this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
         this.mais_proximo = 0;
 
-        this.mlp = new Mlp(this.sensors, 8, 4);
+        this.distSensor = [];
+        this.angSensor = [];
+        this.qntMeteoros_sensor = 10;
+
+        this.mlp = new Mlp(this.qntMeteoros_sensor*2, this.qntMeteoros_sensor*4, 4);
     }
 
     // Desenha os sensores que detectam os meteoros
@@ -79,6 +83,33 @@ class Nave{
         }
     }
 
+    sensor2(meteoros){
+        for(let i=0; i<meteoros.length; i++){
+            if(this.dist(meteoros[i])<this.sensorLen)
+                this.distSensor.push(this.dist(meteoros[i])/this.sensorLen);
+            else
+                this.distSensor.push(1);
+            this.angSensor.push(this.angulo_obj(meteoros[i])/(2*Math.PI));
+        }
+        let aux;
+        for(let i=0; i<meteoros.length-1; i++){
+            for(let j=i+1; j<meteoros.length; j++){
+                if(this.distSensor[i] > this.distSensor[j]){
+                    aux =this.distSensor[i]; 
+                    this.distSensor[i] = this.distSensor[j];
+                    this.distSensor[j] =aux;
+
+                    aux =this.angSensor[i]; 
+                    this.angSensor[i] = this.angSensor[j];
+                    this.angSensor[j] =aux;
+                }
+            }
+        }
+        this.distSensor.splice(this.qntMeteoros_sensor,this.distSensor.length);
+        this.angSensor.splice(this.qntMeteoros_sensor,this.angSensor.length);
+    }
+
+
     mostrarSensor(){
         for (let point of this.sensorPoints) {
             stroke(255, 0, 0);
@@ -95,6 +126,14 @@ class Nave{
         }
     }
 
+    mostrarSensor2(){
+        stroke(0,200,0);
+        noFill();
+        ellipse(this.posicao.x,
+            this.posicao.y, 
+            this.sensorLen*2, this.sensorLen*2); 
+
+    }
 
     //define o metodo para mostrar a nave
     mostrar(cor) {

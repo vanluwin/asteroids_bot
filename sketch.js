@@ -38,6 +38,7 @@ function draw(){
         }
     }
     grift[melhor_indice_vivo].draw_game();
+    grift[melhor_indice_vivo].nave.mostrarSensor2();
     if(grift[melhor_indice].pontos > melhorDaHistoria){
         melhorDaHistoria = grift[melhor_indice].pontos;
         geracaoMelhorHist=geracao;

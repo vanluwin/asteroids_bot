@@ -24,7 +24,7 @@ class Grift{
         }
 
         //cria um intervalo de tempo no qual serão adicionados novos meteros
-
+        frameRate(1000);
         //inserirComando(AG.frente, AG.esquerda, AG.direita, AG.tiro);
         //setInterval(comando, 120);
         //setInterval(removerComando, 1000);
@@ -91,7 +91,8 @@ class Grift{
     }
     
     comandoMlp(){
-        let comando =this.nave.mlp.predict(this.nave.sensorDistances.map(el => el/this.nave.sensorLen)); 
+        //let comando =this.nave.mlp.predict(this.nave.sensorDistances.map(el => el/this.nave.sensorLen)); 
+        let comando =this.nave.mlp.predict(this.nave.distSensor.concat(this.nave.angSensor)); 
         this.inserirComando(comando);
     }
     //função para adicionar pontos ao placar
@@ -111,12 +112,14 @@ class Grift{
             this.estado = 3;
         } 
         if(this.estado != 3){
-            this.nave.sensorDistances = [this.nave.sensorLen,this.nave.sensorLen,this.nave.sensorLen,this.nave.sensorLen];
+            //this.nave.sensorDistances = [this.nave.sensorLen,this.nave.sensorLen,this.nave.sensorLen,this.nave.sensorLen];
             for (let i = 0; i < this.meteoros.length; i++) {
                 if(!stop)
                     this.meteoros[i].update(); //metodo para mover o meteoro
-                this.nave.sensorDistance(this.meteoros[i]);     // Verifica a distancia do meteroro para os sensores
+                //this.nave.sensorDistance(this.meteoros[i]);     // Verifica a distancia do meteroro para os sensores
+
             }
+            this.nave.sensor2(this.meteoros);     // Verifica a distancia e angulos do meteoro para a nave
             this.nave.update();     // Move a nave
             this.nave.edges();      // Verfica se a nave esta nas bordas da tela
             //this.nave.auto_pilot(this.meteoros,this.tiros);
@@ -195,13 +198,12 @@ class Grift{
             text("Meteoros " + this.meteoros.length, 20, 60);
             
             this.nave.mostrar(this.color);    // Desenha a nave
-            this.nave.mostrarSensor();
+            //this.nave.mostrarSensor();
             //desenha todos os tiros
             for (let i = this.tiros.length - 1; i >= 0; i--) {
                 this.tiros[i].mostrar(); //metodo pra mostrar os tiros
             }
         } else if (this.estado == 3) {
-            console.log("TA ERRADO");
         }
     }
 
