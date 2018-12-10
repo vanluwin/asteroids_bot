@@ -6,8 +6,8 @@ class Meteoro {
             this.posicao = posicao.copy();
         } else {
             
-//            this.posicao = createVector((random(width) + 300) %width, (random(height) + 300)%height); //se não uma posição aleatoria é gerada
-           this.posicao = createVector((3/5+4/5*Math.random())%1 * width, Math.random()*height); //se não uma posição aleatoria é gerada
+           this.posicao = createVector((random(width) + 300) %width, (random(height) + 300)%height); //se não uma posição aleatoria é gerada
+        //    this.posicao = createVector((3/5+4/5*Math.random())%1 * width, Math.random()*height); //se não uma posição aleatoria é gerada
         }
 
         if (r) {

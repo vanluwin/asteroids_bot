@@ -3,7 +3,7 @@ class Tiro {
     constructor(posicao, angulo) {
         this.posicao = createVector(posicao.x, posicao.y); //define a posição inicial do tiro como a posição da nave quando o disparo foi feito
         this.velocidade = p5.Vector.fromAngle(angulo - PI / 2); //cria o vetor velociade apartir do angulo da nave quando o disparo foi feito e apontando para cima
-        this.velocidade.mult(10); //aumenta a magnitude do vetor velociade
+        this.velocidade.mult(40); //aumenta a magnitude do vetor velociade
         this.r = 2; //define o raio do circulo que representa o tiro
     }
 

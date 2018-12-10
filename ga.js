@@ -50,7 +50,7 @@ class Population {
 
         this.popSize = this.individuos.length;
         this.generationNumber = 0;
-        this.tx_cruzamento = 0.1;
+        this.tx_cruzamento = 0.02;
     }
 
     seleciona_roleta() {
@@ -88,7 +88,7 @@ class Population {
         let filhos = [];
         
         this.sort();
-
+        
         for (let index = 0; index < Math.ceil(this.individuos.length * this.tx_cruzamento); index++) {//removendo elite
             elite.push(this.individuos[index]);
             this.individuos.splice(index, 1);

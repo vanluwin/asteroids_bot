@@ -50,11 +50,11 @@ class Grift{
         }
         if (comandos[1]) {
             //se foi seta para direita adiona um multiplicador positivo ao angulo para que a nave rode para a direita
-            this.nave.k = 0.03;
+            this.nave.k = 0.06;
         }
         if (comandos[2]) {
             //se foi seta para esquerda adiona um multiplicador negativo ao angulo para que a nave rode para a esquerda
-            this.nave.k = -0.03;
+            this.nave.k = -0.06;
         }
         if (comandos[1]&&comandos[2]) {
             //se foi seta para esquerda adiona um multiplicador negativo ao angulo para que a nave rode para a esquerda
@@ -104,7 +104,7 @@ class Grift{
         location.reload();
     }
 
-    update(stop){
+    update(stop, spawnProtection){
         if (this.estado == 0) {
             this.estado = 1;
         }
@@ -130,8 +130,10 @@ class Grift{
             if(this.meteoros.length < this.max_meteoros)
                 this.criarMeteoro();
 
-            for (let i = 0; i < this.meteoros.length; i++) {
-                this.atingida(this.nave,this.meteoros[i]);   // verificar se um meteoro atingiu a nave
+            if(!spawnProtection){
+                for (let i = 0; i < this.meteoros.length; i++) {
+                    this.atingida(this.nave,this.meteoros[i]);   // verificar se um meteoro atingiu a nave
+                }
             }
             for (let i = this.tiros.length - 1; i >= 0; i--) {
                 this.tiros[i].mover(); //metodo para mover os tiros

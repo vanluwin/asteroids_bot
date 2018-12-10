@@ -7,6 +7,8 @@ let stop = false;
 let geracao=0;
 let melhorDaHistoria = 0;
 let geracaoMelhorHist=0;
+let spawnProtection =0;
+let spawnProtectionTime = 60;
 function setup() {
     for(let i=0; i<150;i++){
         grift.push(new Grift(geracao));
@@ -20,8 +22,12 @@ function draw(){
     let melhor_indice=0;
     let melhor_indice_vivo=0;
     let N_vivos = 0;
+    if(spawnProtection<spawnProtectionTime){
+        spawnProtection++;
+    }
+
     for(let i=0; i<grift.length;i++){
-        grift[i].update(stop);
+        grift[i].update(stop, spawnProtection < spawnProtectionTime);
         grift[i].comandoMlp();
         //grift[i].comandoRandom();
         if(grift[i].vivo){
@@ -50,8 +56,15 @@ function draw(){
     text("Vivos " + N_vivos, 20, 120);
     text("Geração " + geracao, 20, 150);
     text("Record: " + melhorDaHistoria +"@"+geracaoMelhorHist, 20, 180);
+    if(spawnProtection < spawnProtectionTime){
+        fill(255,0,0);
+        text("Spawn Protection ON", 20, 210);
+    }
+    
+    
     if(melhor_indice!=melhor_indice_vivo)
         text("Melhor morto com " + grift[melhor_indice].pontos +" pontos", windowWidth/2-150, windowHeight-100);
+
 
     for(let i=0; i<grift.length;i++)
         if(grift[i].vivo)
@@ -59,7 +72,7 @@ function draw(){
 
     if(!vivos(grift)){   
         let popu = [];
-        
+        spawnProtection = 0;
         for(let i=0; i<grift.length;i++){
             let cromo = new Cromo(grift[i].nave.mlp.getWeights(), grift[i].pontos);
 

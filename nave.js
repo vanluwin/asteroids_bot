@@ -261,7 +261,7 @@ class Nave{
     //define o metodo para a aceleração da nave
     boost() {
         this.acele = p5.Vector.fromAngle(this.angulo - PI / 2); //cria um vetor a partir do angulo da nave que aponta para cima
-        this.acele.mult(0.1); //adiciona um multiplicador, ao vetor aceleração para que eventualmente ele zere
+        this.acele.mult(0.15); //adiciona um multiplicador, ao vetor aceleração para que eventualmente ele zere
         this.velocidade.add(this.acele); // é adicionado ao vetor velocidade o vetor aceleração
     }
 
