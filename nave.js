@@ -26,7 +26,7 @@ class Nave{
         this.angSensor = [];
         this.qntMeteoros_sensor = 10;
 
-        this.mlp = new Mlp(this.qntMeteoros_sensor*2, this.qntMeteoros_sensor*4, 4);
+        this.mlp = new Mlp(this.qntMeteoros_sensor*2, this.qntMeteoros_sensor, 4);
     }
 
     // Desenha os sensores que detectam os meteoros

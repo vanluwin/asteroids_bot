@@ -7,8 +7,10 @@ let stop = false;
 let geracao=0;
 let melhorDaHistoria = 0;
 let geracaoMelhorHist=0;
-let spawnProtection =0;
-let spawnProtectionTime = 60;
+let maxIteracoes = 1000;
+let spawnProtection = 60;
+let iteracoes = 0
+let historiaGen = [];
 function setup() {
     for(let i=0; i<150;i++){
         grift.push(new Grift(geracao));
@@ -19,15 +21,14 @@ function setup() {
 }
 
 function draw(){
+
     let melhor_indice=0;
     let melhor_indice_vivo=0;
     let N_vivos = 0;
-    if(spawnProtection<spawnProtectionTime){
-        spawnProtection++;
-    }
+    iteracoes++;
 
     for(let i=0; i<grift.length;i++){
-        grift[i].update(stop, spawnProtection < spawnProtectionTime);
+        grift[i].update(stop, iteracoes < spawnProtection);
         grift[i].comandoMlp();
         //grift[i].comandoRandom();
         if(grift[i].vivo){
@@ -45,34 +46,41 @@ function draw(){
     }
     grift[melhor_indice_vivo].draw_game();
     grift[melhor_indice_vivo].nave.mostrarSensor2();
-    if(grift[melhor_indice].pontos > melhorDaHistoria){
+    if(grift[melhor_indice].pontos >= melhorDaHistoria){
         melhorDaHistoria = grift[melhor_indice].pontos;
         geracaoMelhorHist=geracao;
     }
-    textSize(25);
-    fill(255); 
-    noStroke();
+    textSize(25);    fill(255);     noStroke();
     text("Individuo " + melhor_indice_vivo, 20, 90);
     text("Vivos " + N_vivos, 20, 120);
     text("Geração " + geracao, 20, 150);
     text("Record: " + melhorDaHistoria +"@"+geracaoMelhorHist, 20, 180);
-    if(spawnProtection < spawnProtectionTime){
-        fill(255,0,0);
-        text("Spawn Protection ON", 20, 210);
+    fill(160);     stroke(255);
+    rect(20, 180+10-1, 150, 20);
+    fill(0,150,0);     noStroke();
+    rect(21, 180+10, iteracoes/maxIteracoes * 150-1, 20-1);
+    if(iteracoes < spawnProtection){
+        fill(255,0,0);        text("Spawn Protection ON", 20, 240);
     }
-    
-    
-    if(melhor_indice!=melhor_indice_vivo)
-        text("Melhor morto com " + grift[melhor_indice].pontos +" pontos", windowWidth/2-150, windowHeight-100);
+    grafico(historiaGen);
 
 
+    if(iteracoes > maxIteracoes)
+        for(let i=0; i<grift.length;i++)
+            grift[i].vivo = false;
+
+    if(melhor_indice!=melhor_indice_vivo){
+        fill(255);   text("Melhor morto com " + grift[melhor_indice].pontos +" pontos", windowWidth/2-150, windowHeight-100);
+
+    }
     for(let i=0; i<grift.length;i++)
         if(grift[i].vivo)
             grift[i].nave.mostrar(grift[i].color);
 
-    if(!vivos(grift)){   
+    if(!vivos(grift)){
+        iteracoes = 0;
+        historiaGen.push(grift[melhor_indice].pontos);
         let popu = [];
-        spawnProtection = 0;
         for(let i=0; i<grift.length;i++){
             let cromo = new Cromo(grift[i].nave.mlp.getWeights(), grift[i].pontos);
 
@@ -116,4 +124,17 @@ function vivos(grift){
             return true;
     }
     return false;
+}
+
+function grafico(y){
+    noStroke();
+    fill(100,0,0);
+    let largura = 2;
+    rect(20, height-10, 2, -height/6);
+    for(let i=0; i<y.length; i++){
+        fill(0,100,100);
+        rect(20+ largura + (largura*(y.length-i-1))%(width/6), height-10, largura, -y[i]/Math.max(...y)*height/6);
+    }
+    fill(250);
+    rect(20 + largura, height-8, (width/6), 2);
 }

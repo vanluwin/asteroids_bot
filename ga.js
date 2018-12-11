@@ -114,21 +114,14 @@ class Population {
         
         console.log("Nova geracao: \n\tFilhos: " + filhos.length + "\n\tElite: " + elite.length);
 
-        filhos.push(...elite);
-
         // Mutacao nos filhos
         this.individuos = filhos.map(filho => {
-            if(Math.random()<0.05)
+            if(Math.random()<0.02)
                 filho.mutate();
             return filho;
         });
-        // for(let i=0 ; i < filhos.length ; i++){
-        //     if(Math.random()<0.05)
-        //         filhos[i].mutate();
-            
-        //     this.individuos[i] = filhos[i]; 
-        // }
 
+        this.individuos.push(...elite);
 
         //console.log(this.individuos);
         

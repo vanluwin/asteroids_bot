@@ -14,7 +14,7 @@ class Meteoro {
             //se foi passado um raio como parâmetro o raio passado é dividido por 2
             this.r = r * 0.5;
         } else {
-            this.r = random(15, 50); //se não um raio aleátorio é gerado
+            this.r = random(150, 200); //se não um raio aleátorio é gerado
         }
 
         if (nave) {

@@ -17,9 +17,9 @@ class Grift{
         //cria um objeto nave
         this.nave = new Nave();
 
-        this.color = Math.random()*100;
+        this.color = Math.random()*50;
         //preenche o vetor meteros com objetos meteoro
-        for (let i = 0; i < 150; i++) {
+        for (let i = 0; i < 10; i++) {
             this.meteoros.push(new Meteoro());
         }
 
