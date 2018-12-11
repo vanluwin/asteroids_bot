@@ -11,9 +11,12 @@ let maxIteracoes = 1000;
 let spawnProtection = 60;
 let iteracoes = 0
 let historiaGen = [];
+let meteoros = [];
 function setup() {
-    for(let i=0; i<150;i++){
-        grift.push(new Grift(geracao));
+    meteoros.push(new Meteoro(createVector(height,height), 100, createVector(0,0)));
+
+    for(let i=0; i<150; i++){
+        grift.push(new Grift(meteoros));
         grift[i].num = i;
         //console.log(Math.floor(grift[i].color)+" indice = " + i);
     }
@@ -92,7 +95,7 @@ function draw(){
         
         // console.log(fetos);
         for(let i=0; i<grift.length; i++){
-            grift[i] = new Grift();
+            grift[i] = new Grift(meteoros);
             grift[i].nave.mlp.setWeights(fetos[i].weights);
         } 
         geracao++;

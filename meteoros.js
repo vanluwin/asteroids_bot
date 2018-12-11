@@ -1,6 +1,6 @@
 class Meteoro {
     //define o construtor meteoro
-    constructor(posicao, r, nave, velocidade) {
+    constructor(posicao, r, velocidade, nave) {
         if (posicao) {
             //se foi passado uma posição como parâmetro a posição passada é copida
             this.posicao = posicao.copy();
@@ -12,7 +12,7 @@ class Meteoro {
 
         if (r) {
             //se foi passado um raio como parâmetro o raio passado é dividido por 2
-            this.r = r * 0.5;
+            this.r = r;
         } else {
             this.r = random(150, 200); //se não um raio aleátorio é gerado
         }
@@ -90,8 +90,8 @@ class Meteoro {
     //metodo para quebrar o meteoro se quando atingido seu raio for maior que 30
     quebrar() {
         var novosM = [];
-        novosM[0] = new Meteoro(this.posicao, this.r);
-        novosM[1] = new Meteoro(this.posicao, this.r);
+        novosM[0] = new Meteoro(this.posicao, this.r * 0.5, this.velocidade);
+        novosM[1] = new Meteoro(this.posicao, this.r * 0.5, this.velocidade);
         return novosM;
     }
 }

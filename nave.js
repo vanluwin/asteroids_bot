@@ -91,21 +91,28 @@ class Nave{
                 this.distSensor.push(1);
             this.angSensor.push(this.angulo_obj(meteoros[i])/(2*Math.PI));
         }
+        if(meteoros.length < this.qntMeteoros_sensor){  //se nao tiver meteoros o suficiente preenche o array com o que falta para nao faltar na mlp
+            for(let i = meteoros.length; i < this.qntMeteoros_sensor; i++){
+                this.angSensor[i] = 1;  
+                this.distSensor[i] = 1;     //insere maior distancia possivel
+            }
+        }
         let aux;
-        for(let i=0; i<meteoros.length-1; i++){
+        //ordenacao da menor distancia para a maior
+        for(let i=0; i<meteoros.length-1; i++){     
             for(let j=i+1; j<meteoros.length; j++){
                 if(this.distSensor[i] > this.distSensor[j]){
-                    aux =this.distSensor[i]; 
+                    aux = this.distSensor[i]; 
                     this.distSensor[i] = this.distSensor[j];
-                    this.distSensor[j] =aux;
+                    this.distSensor[j] = aux;
 
                     aux =this.angSensor[i]; 
                     this.angSensor[i] = this.angSensor[j];
-                    this.angSensor[j] =aux;
+                    this.angSensor[j] = aux;
                 }
             }
         }
-        this.distSensor.splice(this.qntMeteoros_sensor,this.distSensor.length);
+        this.distSensor.splice(this.qntMeteoros_sensor,this.distSensor.length);//corta vetor no tamanho definido
         this.angSensor.splice(this.qntMeteoros_sensor,this.angSensor.length);
     }
 

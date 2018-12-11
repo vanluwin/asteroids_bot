@@ -1,5 +1,5 @@
 class Grift{
-    constructor(){
+    constructor(meteoros = []){
         this.num;
         this.meteoros = [];
         this.tiros = [];
@@ -9,7 +9,7 @@ class Grift{
         this.estado = 0;
         this.vidas = 0;
         this.vivo = true;
-        this.max_meteoros = 1;
+        this.max_meteoros = 10;
 
         //cria o lugar onde o jogo acontecerá
         createCanvas(windowWidth * 0.99, windowHeight * 0.95);
@@ -19,11 +19,13 @@ class Grift{
 
         this.color = Math.random()*50;
         //preenche o vetor meteros com objetos meteoro
-        for (let i = 0; i < 10; i++) {
-            this.meteoros.push(new Meteoro());
-        }
-
-        //cria um intervalo de tempo no qual serão adicionados novos meteros
+        if(!(meteoros.length>0))
+            for (let i = 0; i < this.max_meteoros; i++) {
+                this.meteoros.push(new Meteoro());
+            }
+        else{
+            this.meteoros = meteoros.slice();
+        }    //cria um intervalo de tempo no qual serão adicionados novos meteros
         frameRate(1000);
         //inserirComando(AG.frente, AG.esquerda, AG.direita, AG.tiro);
         //setInterval(comando, 120);
@@ -273,16 +275,9 @@ class Grift{
         } else if (key === " ") {
             //se a telca foi a barra de espaço e a nave esta morta a pagina será recarregada
             //se não um novo tiro sera criado e adicionado no vetor tiros
-            if (this.estado == 0) {
-                this.estado = 1;
-            } else if (this.estado == 2) {
-                this.estado = 3;
-            } else if (this.estado == 3) {
-                this.recarregar();
-            } else {
-                let tiro = new Tiro(this.nave.posicao, this.nave.angulo);
-                this.tiros.push(tiro);
-            }
+            let tiro = new Tiro(this.nave.posicao, this.nave.angulo);
+            this.tiros.push(tiro);
+        
         }
     }
 
