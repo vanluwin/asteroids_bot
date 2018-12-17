@@ -1,25 +1,35 @@
 class Mlp {
     // Fully-connected Multi-Layer Perceptron (MLP)
-    constructor(inputSize, hiddenSize, outputSize, learning_rate = 0.01, bias = 1) {
+    constructor(inputSize, hiddenSize, outputSize, bias = 1) {
         this.inputSize = inputSize;
         this.hiddenSize = hiddenSize;
         this.outputSize = outputSize;
-        this.lr = learning_rate;
         this.bias = bias;
 
         // Weights
-        this.w1 = nj.random([this.inputSize + 1, this.hiddenSize]);
-        this.w2 = nj.random([this.hiddenSize, this.outputSize]);
+        this.w1 = nj.random([this.inputSize + 1, this.hiddenSize]).multiply(2).subtract(1);
+        this.w2 = nj.random([this.hiddenSize, this.outputSize]).multiply(2).subtract(1);
+        // Math.round(this.w1*100)/100;
+        // Math.round(this.w2*100)/100;
     }
 
     // Faz uma predição
     predict(inp) {
-        let net1 = nj.sigmoid(nj.dot(inp, this.w1));
-        let net2 = nj.sigmoid(nj.dot(net1, this.w2));
+        let net1 = this.degrau([...nj.dot([...inp, this.bias], this.w1).selection.data]);
+        let net2 = this.degrau([...nj.dot(net1, this.w2).selection.data]);
+        // let net1 = [...nj.dot([...inp, this.bias], this.w1).selection.data];
+        // let net2 = [...nj.dot(net1, this.w2).selection.data];
 
+        // console.log(net2);
         return net2;
     }
 
+    degrau(array){
+        array = array.map(n => {
+            return n>0 ? 1 : 0;            
+        });
+        return array;
+    }
     // Retorna os pesos para a GA
     getWeights() {
         let w1 = this.w1.flatten().selection.data;

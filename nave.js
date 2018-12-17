@@ -1,10 +1,10 @@
-class Nave {
+class Nave{
     //define o contrutor Nave
     constructor() {
         this.posicao = createVector(width / 2, height / 2); //define a posição inicial como o centro da tela
         this.velocidade = createVector(0, 0); //define a velocidade como o vetor nulo
         this.acele = createVector(0, 0); //define a aceleração como o vetor nulo
-        this.angulo = 0; //define o angulo inicial como zero
+        this.angulo = 2*Math.PI*Math.random(); //define o angulo inicial como zero
         this.k = 0; //define o multiplicador do angulo inicialmente como zero
         this.r = 20; //raio para ser verificado colisões
         this.isBoosting = false; //define o estado 'está acelerando' como falso
@@ -14,11 +14,19 @@ class Nave {
         };
 
         this.sensors = 4;
-        this.sensorLen = 200;
+        this.sensorLen = 900;
         this.sensorPoints = [];
-        this.sensorDistances = [];
+        if(this.sensors==4)
+            this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
+        if(this.sensors==8)
+            this.sensorDistances = [this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen,this.sensorLen];
+        this.mais_proximo = 0;
 
-        this.mlp = new Mlp(this.sensors, 8, 4);
+        this.distSensor = [];
+        this.angSensor = [];
+        this.qntMeteoros_sensor = 10;
+
+        this.mlp = new Mlp(this.qntMeteoros_sensor*2, this.qntMeteoros_sensor, 4);
     }
 
     // Desenha os sensores que detectam os meteoros
@@ -45,19 +53,7 @@ class Nave {
     }
 
     sensorDistance(meteoro) {
-        for (let point of this.sensorPoints) {
-            stroke(255, 0, 0);
-            line(
-                this.posicao.x,
-                this.posicao.y,
-                cos(this.angulo) * point.x -
-                    sin(this.angulo) * point.y +
-                    this.posicao.x,
-                sin(this.angulo) * point.x +
-                    cos(this.angulo) * point.y +
-                    this.posicao.y
-            );
-
+        for (let [i, point] of this.sensorPoints.entries()) {
             if (
                 collideLineCircle(
                     this.posicao.x,
@@ -70,31 +66,93 @@ class Nave {
                         this.posicao.y,
                     meteoro.posicao.x,
                     meteoro.posicao.y,
-                    meteoro.r
+                    meteoro.r*2
                 )
             ) {
-                console.log("Intercept");
                 let d = dist(
                     this.posicao.x,
                     this.posicao.y,
                     meteoro.posicao.x,
                     meteoro.posicao.y
                 );
-
-                console.log("d: " + d);
+                this.sensorDistances[i] = d;
+            }
+            else if(this.sensorDistances[i] > this.sensorLen){
+                this.sensorDistances[i] = this.sensorLen;
             }
         }
     }
 
+    sensor2(meteoros){
+        for(let i=0; i<meteoros.length; i++){
+            if(this.dist(meteoros[i])<this.sensorLen)
+                this.distSensor.push(this.dist(meteoros[i])/this.sensorLen);
+            else
+                this.distSensor.push(1);
+            this.angSensor.push(this.angulo_obj(meteoros[i])/(2*Math.PI));
+        }
+        if(meteoros.length < this.qntMeteoros_sensor){  //se nao tiver meteoros o suficiente preenche o array com o que falta para nao faltar na mlp
+            for(let i = meteoros.length; i < this.qntMeteoros_sensor; i++){
+                this.angSensor[i] = 1;  
+                this.distSensor[i] = 1;     //insere maior distancia possivel
+            }
+        }
+        let aux;
+        //ordenacao da menor distancia para a maior
+        for(let i=0; i<meteoros.length-1; i++){     
+            for(let j=i+1; j<meteoros.length; j++){
+                if(this.distSensor[i] > this.distSensor[j]){
+                    aux = this.distSensor[i]; 
+                    this.distSensor[i] = this.distSensor[j];
+                    this.distSensor[j] = aux;
+
+                    aux =this.angSensor[i]; 
+                    this.angSensor[i] = this.angSensor[j];
+                    this.angSensor[j] = aux;
+                }
+            }
+        }
+        this.distSensor.splice(this.qntMeteoros_sensor,this.distSensor.length);//corta vetor no tamanho definido
+        this.angSensor.splice(this.qntMeteoros_sensor,this.angSensor.length);
+    }
+
+
+    mostrarSensor(){
+        for (let point of this.sensorPoints) {
+            stroke(255, 0, 0);
+            line(
+                this.posicao.x,
+                this.posicao.y,
+                cos(this.angulo) * point.x -
+                    sin(this.angulo) * point.y +
+                    this.posicao.x,
+                sin(this.angulo) * point.x +
+                    cos(this.angulo) * point.y +
+                    this.posicao.y
+            );
+        }
+    }
+
+    mostrarSensor2(){
+        stroke(0,200,0);
+        noFill();
+        ellipse(this.posicao.x,
+            this.posicao.y, 
+            this.sensorLen*2, this.sensorLen*2); 
+
+    }
+
     //define o metodo para mostrar a nave
-    mostrar() {
-        this.angulo += this.k; //adiciona ao angulo o multiplicador 'k'
+    mostrar(cor) {
         stroke(255); //define o contorno com a cor branco
-        fill(0); //preence a forma com preto
+        fill(Math.floor(cor)); //preence a forma com preto
+        //console.log(Math.floor(cor));
         push(); //começa uma nova rotina de desenho
         translate(this.posicao.x, this.posicao.y); //muda o centro de cordenadas da tela para a atual posição da nave
         rotate(this.angulo); //roda a nave em seu atual angulo
         rectMode(CENTER);
+
+
 
         //forma da nave se estiver acelerando
         if (this.isBoosting) {
@@ -126,6 +184,72 @@ class Nave {
         pop(); //encerra a nova rotina de desenho a retorna a padrão
     }
 
+    dist(objeto){
+        return dist(this.posicao.x, this.posicao.y, objeto.posicao.x, objeto.posicao.y);
+    }
+
+    angulo_obj(objeto){
+        return (2* PI       // Pegar o complementar
+        - ((this.angulo % (2*PI)) + (2*PI)) % (2*PI)  //calcula o angulo absoluto positivo da nave
+        + (atan2(this.posicao.y - objeto.posicao.y ,this.posicao.x - objeto.posicao.x ) +3*PI/2)
+        )% (2*PI);   //angulo do meteoro relativo à nave
+
+    }
+    auto_pilot(meteoros, tiros){
+        let mais_distante = 0;
+        let ang_tiro = 100;
+
+        for(let i=0; i<meteoros.length; i++){ //encontra nave mais proxima
+            if(this.dist(meteoros[i]) < this.dist(meteoros[this.mais_proximo]))
+                this.mais_proximo = i; 
+            if(this.dist(meteoros[i]) > this.dist(meteoros[mais_distante]))
+                mais_distante = i; 
+            
+        }
+        if(meteoros.length != 0){
+            let ang_mais_proximo;
+            ang_mais_proximo = this.angulo_obj(meteoros[this.mais_proximo]);
+            //text((ang_mais_proximo), 20, 180);
+
+            if(this.dist(meteoros[this.mais_proximo])<200){
+                if(ang_mais_proximo > 8.2*PI/8)
+                    this.k = 0.03;
+                else if(ang_mais_proximo < 7.8*PI/8 ) 
+                    this.k = -0.03;
+                else
+                    this.k = 0;
+            }
+            else
+                this.k = 0.01;
+            if(this.dist(meteoros[this.mais_proximo])<meteoros[this.mais_proximo].r+ 80){ 
+                if(ang_mais_proximo < 12*PI/8 
+                && ang_mais_proximo > 4*PI/8 )
+                    this.boosting(true);
+            }
+            else{
+                this.boosting(false);
+            }
+
+            for(let i=0; i<meteoros.length; i++){
+                if(10* cos(PI/2 - this.angulo_obj(meteoros[i])) >= sqrt(meteoros[this.mais_proximo].velocidade.x**2 +meteoros[this.mais_proximo].velocidade.y**2)*0.95
+                && 10* cos(PI/2 - this.angulo_obj(meteoros[i])) <= sqrt(meteoros[this.mais_proximo].velocidade.x**2 +meteoros[this.mais_proximo].velocidade.y**2)*1.05
+                && this.angulo_obj(meteoros[i]) < PI/2
+                ){
+                    if(tiros.length<1){
+                        let tiro = new Tiro(this.posicao, this.angulo);
+                        tiros.push(tiro);
+                    }
+                }
+                else if(this.angulo_obj(meteoros[i]) < PI/ang_tiro 
+                || this.angulo_obj(meteoros[i]) > PI*(2-1/ang_tiro) ){
+                    if(tiros.length<1){
+                        let tiro = new Tiro(this.posicao, this.angulo);
+                        tiros.push(tiro);
+                    }
+                }
+            }
+        }
+    }
     //define o metodo para mover a nave
     update() {
         if (this.isBoosting) {
@@ -133,6 +257,7 @@ class Nave {
             this.boost();
         }
 
+        this.angulo += this.k; //adiciona ao angulo o multiplicador 'k' 
         //se não é adicionado ao vetor posição o vetor velocidade
         this.posicao.add(this.velocidade);
 
@@ -143,7 +268,7 @@ class Nave {
     //define o metodo para a aceleração da nave
     boost() {
         this.acele = p5.Vector.fromAngle(this.angulo - PI / 2); //cria um vetor a partir do angulo da nave que aponta para cima
-        this.acele.mult(0.1); //adiciona um multiplicador, ao vetor aceleração para que eventualmente ele zere
+        this.acele.mult(0.15); //adiciona um multiplicador, ao vetor aceleração para que eventualmente ele zere
         this.velocidade.add(this.acele); // é adicionado ao vetor velocidade o vetor aceleração
     }
 
@@ -162,27 +287,4 @@ class Nave {
         }
     }
 
-    //define o metodo que verifica se a nave foi atingida
-    atingida(meteoro) {
-        //cria a variavel 'd' que recebe a distancia entre a posicção atual da nave e o meteoro que foi passado como parâmetro
-        var d = dist(
-            this.posicao.x,
-            this.posicao.y,
-            meteoro.posicao.x,
-            meteoro.posicao.y
-        );
-
-        if (d < this.r + meteoro.r) {
-            //se o raio de colisão da nave for menor que sua soma com o raio do metroro
-            if (vidas == 0) {
-                //se não houver mais vidas escreve na tela fim de jogo
-                estado = 2;
-                this.vivo = false;
-            } else {
-                //se ainda houver vidas
-                vidas--; //uma vida é perdida
-                nave = new Nave(); //e a nave volta para o centro da tela
-            }
-        }
-    }
 }
