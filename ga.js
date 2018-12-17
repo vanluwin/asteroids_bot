@@ -6,36 +6,63 @@ class Cromo {
     }
 
     mutate() {
-        // let papapa = this.weights;        
-        // let indice1 = Math.floor((Math.random() * this.weights.length));
-        // let indice2 = Math.floor((Math.random() * this.weights.length));
-        
-        // while(indice1 === indice2) { 
-        //     indice2 = Math.floor((Math.random() * this.weights.length));
-        // }
-
-        // let aux = this.weights[indice1]; 
-        // this.weights[indice1] = this.weights[indice2];
-        // this.weights[indice2] = aux;
-
-        // console.log(aux)
-        // for(let i = 0; i<papapa.length; i++){
-        //     // console.log(papapa[i] ,this.weights[i]);
-        //     if(papapa[i]!=this.weights[i])
-        //         console.log("sadasdasd");
-        // }
-       //console.log("MUTOU");
-        for(let i=0; i < this.weights.length; i++){
-            if(Math.random()<0.05){
-                this.weights[i] = Math.random()*2-1;
-            }
+        let papapa = this.weights;        
+        let indice1 = Math.floor((Math.random() * this.weights.length));
+        let indice2 = Math.floor((Math.random() * this.weights.length));
+        while(indice1 === indice2) { 
+            indice2 = Math.floor((Math.random() * this.weights.length));
         }
+        let aux = this.weights[indice1]; 
+        this.weights[indice1] = this.weights[indice2];
+        this.weights[indice2] = aux;
+        for(let i = 0; i<papapa.length; i++){
+            // console.log(papapa[i] ,this.weights[i]);
+            if(papapa[i]!=this.weights[i])
+                console.log("sadasdasd");
+        }
+       
+        // //random de -1 a 1
+
+        // for(let i=0; i < this.weights.length; i++){
+        //     if(Math.random()<0.1){
+        //         this.weights[i] = Math.random()*2-1;
+        //     }
+        // }
+
+        // //soma random de -0.2 a 0.2
+
+        // for(let i=0; i < this.weights.length; i++){
+        //     if(Math.random()<0.2){
+        //         this.weights[i] += (Math.random()*2-1)*0.2;
+        //     }
+        // }
     }
     cruzamento(cromo) {
         let pivot = Math.round(this.weights.length / 2);
         let child1 = this.weights.slice(0, pivot).concat(cromo.weights.slice(pivot, this.weights.length));
         let child2 = cromo.weights.slice(0, pivot).concat(this.weights.slice(pivot, this.weights.length));
+        
+        // let child1 = [];
+        // let child2 = [];
+        // for(let i=0; i<this.weights.length; i++){
+        //     if(Math.random()>0.5){
+        //         child1[i] = cromo.weights[i];
+        //         child2[i] = this.weights[i];
+        //     }
+        //     else{
+        //         child1[i] = this.weights[i];
+        //         child2[i] = cromo.weights[i];
+        //     }
+        // }
 
+
+        // let child1 = [];
+        // let child2 = [];
+        // let ponderacao = this.aptidao/(this.aptidao + cromo.aptidao);
+        // for(let i=0; i<this.weights.length; i++){
+        //     child1[i] = (cromo.weights[i]+this.weights[i])*ponderacao;
+        //     child2[i] = (cromo.weights[i]+this.weights[i])*(1-ponderacao);
+        // }
         return [new Cromo(child1, 0), new Cromo(child2, 0)];
     }
 }
@@ -50,7 +77,7 @@ class Population {
 
         this.popSize = this.individuos.length;
         this.generationNumber = 0;
-        this.tx_cruzamento = 0.1;
+        this.tx_cruzamento = 0.02;
     }
 
     seleciona_roleta() {
@@ -88,7 +115,7 @@ class Population {
         let filhos = [];
         
         this.sort();
-
+        
         for (let index = 0; index < Math.ceil(this.individuos.length * this.tx_cruzamento); index++) {//removendo elite
             elite.push(this.individuos[index]);
             this.individuos.splice(index, 1);
@@ -114,21 +141,14 @@ class Population {
         
         console.log("Nova geracao: \n\tFilhos: " + filhos.length + "\n\tElite: " + elite.length);
 
-        filhos.push(...elite);
-
         // Mutacao nos filhos
         this.individuos = filhos.map(filho => {
-            if(Math.random()<0.05)
+            if(Math.random()<0.02)
                 filho.mutate();
             return filho;
         });
-        // for(let i=0 ; i < filhos.length ; i++){
-        //     if(Math.random()<0.05)
-        //         filhos[i].mutate();
-            
-        //     this.individuos[i] = filhos[i]; 
-        // }
 
+        this.individuos.push(...elite);
 
         //console.log(this.individuos);
         
